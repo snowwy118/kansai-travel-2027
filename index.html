@@ -51,6 +51,16 @@ main{max-width:1050px;margin:auto;padding:32px clamp(16px,5vw,52px) 60px}.intro{
 @media(min-width:620px){.photo-card img{height:190px}.food-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.map-frame{height:300px}}
 @media print{.map-actions,.food-map{display:none!important}.map-frame{height:180px}}
 
+
+.budget-table{width:100%;border-collapse:collapse;margin:12px 0;background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden;font:11px Arial,sans-serif}
+.budget-table th,.budget-table td{padding:11px 9px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+.budget-table th{background:#e8eeea;color:#50686a;font-weight:600}
+.budget-table td:nth-child(2),.budget-table td:nth-child(3){white-space:nowrap;font-variant-numeric:tabular-nums}
+.budget-table tr:last-child td{border-bottom:0}
+.budget-total{background:#f3ece1;font-weight:700}
+.budget-note{font:10px/1.7 Arial,sans-serif;color:var(--muted);margin-top:9px}
+@media(max-width:420px){.budget-table th,.budget-table td{padding:9px 6px;font-size:10px}}
+
 </style>
 <!-- Cloud publishing setup: replace the two placeholders with your Supabase project values. -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -69,57 +79,83 @@ main{max-width:1050px;margin:auto;padding:32px clamp(16px,5vw,52px) 60px}.intro{
 <div class="panel"><div class="label">OUTBOUND · MH052 · 22 MAY</div><div class="flights"><div><strong>22:25</strong><small>KUL · 22 MAY 2027</small></div><div style="text-align:center">✈</div><div class="right"><strong>05:55</strong><small>KIX · 23 MAY 2027</small></div></div><p style="margin-top:8px">Malaysia Airlines · Overnight flight</p></div>
 <div class="panel"><div class="label">RETURN · MH053 · 31 MAY</div><div class="flights"><div><strong>09:40</strong><small>KIX · 31 MAY 2027</small></div><div style="text-align:center">✈</div><div class="right"><strong>15:45</strong><small>KUL · 31 MAY 2027</small></div></div><p style="margin-top:8px">Malaysia Airlines · Monday</p></div>
 <div class="hotel"><div class="label">YOUR OSAKA HOME · 8 NIGHTS</div><h3>VESSEL INN SHINSAIBASHI</h3><p>2-12-11 Minamisenba, Chuo Ward, Osaka<br>23 May check-in · 31 May check-out<br>1 room · Single non-smoking<br>清晨抵達先寄放行李，下午再辦理入住。</p></div></section>
-<section><div class="label">10 DAYS, AT A GLANCE</div><h2>每日行程與交通</h2><p>點選日期展開行程照片、美食靈感與每日地圖。可直接開啟 Google Maps 導航；任何訪客都能編輯並同步到雲端。</p>
+<section><div class="label">10 DAYS, AT A GLANCE</div><h2>每日行程與交通</h2><p>點選日期展開行程照片、美食靈感與每日地圖。主線依最新安排調整；未排入的景點保留在下方備選區。可直接開啟 Google Maps 導航；任何訪客都能編輯並同步到雲端。</p>
 <div class="toolbar"><button class="primary" id="editBtn" disabled>開始編輯</button><button id="saveBtn" disabled>同步儲存</button><button id="cancelBtn" disabled>取消修改</button><button id="printBtn">列印 / 存成 PDF</button></div><div class="edit-hint" id="hint">正在連接雲端行程資料…</div>
-<div class="tabs"><button class="active" data-filter="all">全部 10 天</button><button data-filter="osaka">大阪</button><button data-filter="kyoto">京都</button><button data-filter="kobe">神戶</button></div>
+<div class="tabs"><button class="active" data-filter="all">全部 9 天</button><button data-filter="osaka">大阪</button><button data-filter="kyoto">京都</button><button data-filter="kobe">神戶</button></div>
 <div id="days">
-<details class="day" data-city="osaka" open><summary><span class="dn">DAY 01</span><span><div class="dt">抵達大阪・心齋橋初體驗</div><div class="dd">23 MAY · SUN · OSAKA</div></span><span class="plus">＋</span></summary><div class="content">
-<div class="stop"><div class="time">05:55</div><b>抵達關西國際機場 KIX</b><p>入境、領行李、準備交通卡或手機支付。</p><div class="route">KIX → 南海電鐵 Airport Express / Rapi:t → Namba → Osaka Metro 御堂筋線 → Shinsaibashi → 酒店。車程與班次以當日資訊為準。</div></div>
-<div class="stop"><div class="time">08:30 左右</div><b>Vessel Inn Shinsaibashi 寄放行李</b><p>先寄放行李，不預訂提早入住；寄放服務及當日可辦理時間建議出發前向酒店確認。</p></div>
-<div class="stop"><div class="time">09:00–13:00</div><b>早餐・心齋橋筋商店街・美國村</b><p>安排早餐、咖啡及輕鬆逛街，第一天不排太多步行。</p><div class="route">酒店周邊步行探索。</div></div>
-<div class="stop"><div class="time">15:00 後</div><b>回酒店辦理入住・休息</b><p>下午回酒店正式入住，稍作休息。</p></div>
-<div class="stop"><div class="time">傍晚</div><b>道頓堀・戎橋</b><p>固力果招牌、河岸散步及大阪美食。</p><div class="route">由酒店步行前往道頓堀，約10–15分鐘，依路線而定。</div></div></div></details>
-<details class="day" data-city="osaka"><summary><span class="dn">DAY 02</span><span><div class="dt">Universal Studios Japan</div><div class="dd">24 MAY · MON · OSAKA</div></span><span class="plus">＋</span></summary><div class="content">
-<div class="stop"><div class="time">早上 · 提早出發</div><b>前往環球影城</b><p>建議提早抵達，入園後優先安排熱門園區。</p><div class="route">Shinsaibashi → 御堂筋線至 Umeda → 步行至 JR Osaka → JR Osaka Loop Line 至 Nishikujo → JR Yumesaki Line 至 Universal-City。</div></div>
-<div class="stop"><div class="time">全天</div><b>Super Nintendo World・哈利波特魔法世界</b><p>預留園區遊玩、餐飲、遊行與休息時間。快速通關、指定入場時段及開園時間以官方 App 與日曆為準。</p></div>
-<div class="stop"><div class="time">閉園後</div><b>返回酒店休息</b><p>Universal-City → Nishikujo → Osaka → Umeda → Shinsaibashi。</p></div></div></details>
-<details class="day" data-city="osaka"><summary><span class="dn">DAY 03</span><span><div class="dt">大阪城・中之島・梅田夜景</div><div class="dd">25 MAY · TUE · OSAKA</div></span><span class="plus">＋</span></summary><div class="content">
-<div class="stop"><div class="time">09:00</div><b>大阪城公園</b><p>天守閣外觀、護城河及公園散步；入館另預留時間。</p><div class="route">Shinsaibashi → 御堂筋線至 Hommachi → 中央線至 Tanimachi 4-chome → 步行前往。</div></div>
-<div class="stop"><div class="time">12:30</div><b>中之島午餐・河岸散步</b><p>河岸建築、咖啡廳及美術館周邊。</p></div>
-<div class="stop"><div class="time">16:00</div><b>梅田・空中庭園展望台</b><p>購物及夜景，入場時間待確認。</p><div class="route">梅田一帶搭御堂筋線返回 Shinsaibashi。</div></div></div></details>
-<details class="day" data-city="kyoto"><summary><span class="dn">DAY 04</span><span><div class="dt">京都東山・清水寺・祇園</div><div class="dd">26 MAY · WED · KYOTO</div></span><span class="plus">＋</span></summary><div class="content">
-<div class="stop"><div class="time">07:30</div><b>大阪出發前往京都</b><p>早餐後出發，建議避開高峰時段。</p><div class="route">Shinsaibashi → 御堂筋線至 Umeda → 步行至 JR Osaka → JR Kyoto Line 至 Kyoto Station。</div></div>
-<div class="stop"><div class="time">09:30</div><b>清水寺</b><p>參觀寺院與清水舞台。</p><div class="route">京都站搭巴士至 Gojo-zaka / Kiyomizu-michi，再步行上坡；路線及車況當日確認。</div></div>
-<div class="stop"><div class="time">12:00</div><b>二年坂・三年坂</b><p>傳統街道、茶屋、甜點及小店。</p></div>
-<div class="stop"><div class="time">15:00</div><b>八坂神社・祇園・花見小路</b><p>慢慢走訪東山街區，傍晚返回大阪。</p><div class="route">可步行至祇園四條站，搭京阪線至淀屋橋，再轉御堂筋線至心齋橋。</div></div></div></details>
-<details class="day" data-city="kyoto"><summary><span class="dn">DAY 05</span><span><div class="dt">伏見稻荷・錦市場・鴨川</div><div class="dd">27 MAY · THU · KYOTO</div></span><span class="plus">＋</span></summary><div class="content">
-<div class="stop"><div class="time">07:00</div><b>伏見稻荷大社</b><p>早上走千本鳥居，按體力決定登山距離。</p><div class="route">Shinsaibashi → Umeda / Osaka → JR Kyoto Line 至 Kyoto → JR Nara Line 至 Inari。</div></div>
-<div class="stop"><div class="time">11:30</div><b>錦市場</b><p>京都小食、玉子燒、漬物及甜點。</p><div class="route">由 Inari 返回 Kyoto Station，再搭地鐵烏丸線至 Shijo，步行至錦市場。</div></div>
-<div class="stop"><div class="time">14:00</div><b>四條河原町・鴨川</b><p>購物、咖啡、河岸散步。</p></div>
-<div class="stop"><div class="time">17:00</div><b>返回大阪</b><p>京都站 JR Kyoto Line → Osaka → 御堂筋線 Umeda → Shinsaibashi。</p></div></div></details>
-<details class="day" data-city="kyoto"><summary><span class="dn">DAY 06</span><span><div class="dt">嵐山竹林・天龍寺・渡月橋</div><div class="dd">28 MAY · FRI · KYOTO</div></span><span class="plus">＋</span></summary><div class="content">
-<div class="stop"><div class="time">07:30</div><b>前往嵐山</b><p>從大阪出發，建議早到竹林。</p><div class="route">Shinsaibashi → Umeda → JR Osaka → JR Kyoto Line 至 Kyoto → JR Sagano Line 至 Saga-Arashiyama。</div></div>
-<div class="stop"><div class="time">09:00</div><b>嵐山竹林・天龍寺</b><p>散步及庭園參觀，留意寺院入場時間。</p></div>
-<div class="stop"><div class="time">12:00</div><b>嵐山午餐</b><p>蕎麥麵、豆腐料理或日式定食。</p></div>
-<div class="stop"><div class="time">14:00</div><b>渡月橋・河畔</b><p>河景散步、甜點及拍照。</p></div>
-<div class="stop"><div class="time">16:30</div><b>返回大阪</b><p>Saga-Arashiyama → Kyoto → Osaka → Shinsaibashi。</p></div></div></details>
-<details class="day" data-city="kobe"><summary><span class="dn">DAY 07</span><span><div class="dt">神戶北野・南京町・港口夜景</div><div class="dd">29 MAY · SAT · KOBE</div></span><span class="plus">＋</span></summary><div class="content">
-<div class="stop"><div class="time">08:30</div><b>大阪前往神戶三宮</b><p>建議搭 JR 神戶線。</p><div class="route">Shinsaibashi → 御堂筋線至 Umeda → JR Osaka → JR Kobe Line 新快速 / 快速至 Sannomiya。</div></div>
-<div class="stop"><div class="time">10:00</div><b>北野異人館街</b><p>洋館街區、坡道與咖啡廳。</p></div>
-<div class="stop"><div class="time">12:30</div><b>神戶牛午餐</b><p>建議預約鐵板燒，先確認套餐價格。</p></div>
-<div class="stop"><div class="time">14:30</div><b>南京町・美利堅公園</b><p>中華街小吃、海港散步。</p></div>
-<div class="stop"><div class="time">17:30</div><b>Harborland・神戶港塔</b><p>欣賞港灣景色，之後搭 JR 返回大阪。</p><div class="route">港區 → Motomachi / Kobe Station → JR 至 Sannomiya → Osaka → Umeda → Shinsaibashi。</div></div></div></details>
-<details class="day" data-city="osaka"><summary><span class="dn">DAY 08</span><span><div class="dt">大阪購物・最後晚餐</div><div class="dd">30 MAY · SUN · OSAKA</div></span><span class="plus">＋</span></summary><div class="content">
-<div class="stop"><div class="time">09:30</div><b>黑門市場</b><p>海鮮、玉子燒及在地小吃；店家營業時間各異。</p><div class="route">酒店步行至 Shinsaibashi → 御堂筋線至 Namba，再步行前往。</div></div>
-<div class="stop"><div class="time">12:00</div><b>難波・日本橋</b><p>購物、藥妝及伴手禮。</p></div>
-<div class="stop"><div class="time">15:00</div><b>心齋橋最後採購</b><p>補買伴手禮，回酒店整理行李。</p></div>
-<div class="stop"><div class="time">18:00</div><b>大阪最後晚餐</b><p>留給最想再吃一次的大阪美食。</p></div></div></details>
-<details class="day" data-city="osaka"><summary><span class="dn">DAY 09</span><span><div class="dt">回程日・KIX → KUL</div><div class="dd">31 MAY · MON · MH053</div></span><span class="plus">＋</span></summary><div class="content">
-<div class="stop"><div class="time">清晨</div><b>酒店退房</b><p>建議目標約06:40抵達機場，為國際航班預留約3小時。</p></div>
-<div class="stop"><div class="time">交通待確認</div><b>前往關西國際機場</b><p>酒店 → Shinsaibashi 御堂筋線 → Namba → 南海電鐵 → KIX。需核對當日首班車；若時間不合，預先安排計程車或接送。</p></div>
+<details class="day" data-city="osaka" open><summary><span class="dn">DAY 01</span><span><div class="dt">抵達・道頓堀・心齋橋</div><div class="dd">23 MAY · SUN · OSAKA</div></span><span class="plus">＋</span></summary><div class="content">
+<div class="stop"><div class="time">05:55</div><b>抵達關西國際機場 KIX</b><p>入境、領行李，準備交通卡或手機支付。</p><div class="route">KIX → 南海電鐵至 Namba → Osaka Metro 御堂筋線至 Shinsaibashi；班次與交通時間出發前再確認。</div></div>
+<div class="stop"><div class="time">08:30 左右</div><b>Vessel Inn Shinsaibashi 寄放行李</b><p>先寄放行李，不預訂提早入住；寄放安排建議出發前向酒店確認。</p></div>
+<div class="stop"><div class="time">上午</div><b>心齋橋筋商店街・美國村</b><p>第一天以酒店周邊輕鬆散步為主，若精神不錯可先逛幾間小店。</p></div>
+<div class="stop"><div class="time">15:00 後</div><b>回酒店辦理入住・休息</b><p>下午正式入住，稍作休息。</p></div>
+<div class="stop"><div class="time">傍晚至晚上</div><b>道頓堀・戎橋・晚餐</b><p>固力果招牌、河岸夜景、大阪燒與章魚燒；不用趕行程。</p><div class="route">酒店步行至道頓堀約10–15分鐘，依實際路線而定。</div></div></div></details>
+<details class="day" data-city="osaka" ><summary><span class="dn">DAY 02</span><span><div class="dt">購物主力日・日本橋動漫巡禮</div><div class="dd">24 MAY · MON · OSAKA</div></span><span class="plus">＋</span></summary><div class="content">
+<div class="stop"><div class="time">10:00 左右</div><b>日本橋・Den Den Town</b><p>先逛模型、Figure、動漫周邊及二手收藏店；可留意 Animate、Jungle、Surugaya 等店舖，逐間比較品相與價格。</p><div class="route">由 Shinsaibashi 搭御堂筋線至 Namba，再步行往日本橋；店家開門時間各異，建議先查目標店。</div></div>
+<div class="stop"><div class="time">中午</div><b>日本橋／難波午餐</b><p>在日本橋或難波附近簡單吃午餐，預留時間慢慢尋寶。</p></div>
+<div class="stop"><div class="time">下午</div><b>Pokémon Center OSAKA DX・大丸心齋橋</b><p>位於 Daimaru Shinsaibashi 本館 9F；可順道逛 Pokémon Cafe（需另行確認預約）。</p></div>
+<div class="stop"><div class="time">下午</div><b>CAPCOM STORE OSAKA・心齋橋 PARCO</b><p>位於 Shinsaibashi PARCO 6F；可看 Monster Hunter、Street Fighter 等官方周邊。</p></div>
+<div class="stop"><div class="time">傍晚</div><b>藥妝・Don Quijote 道頓堀</b><p>把藥妝、零食與伴手禮集中在最後買；Donki 分店及營業時間出發前再確認。</p><div class="route">心齋橋 → 道頓堀一帶步行串連，買完可直接吃晚餐。</div></div></div></details>
+<details class="day" data-city="osaka" ><summary><span class="dn">DAY 03</span><span><div class="dt">Universal Studios Japan・環球影城</div><div class="dd">25 MAY · TUE · OSAKA</div></span><span class="plus">＋</span></summary><div class="content">
+<div class="stop"><div class="time">早上・提早出發</div><b>前往環球影城</b><p>建議提早抵達，入園後先安排熱門園區與指定入場時段。</p><div class="route">Shinsaibashi → 御堂筋線至 Umeda → JR Osaka → Nishikujo → JR Yumesaki Line 至 Universal-City。</div></div>
+<div class="stop"><div class="time">全天</div><b>Super Nintendo World・哈利波特魔法世界</b><p>安排園區設施、表演、主題餐點及購物；入園時間、整理券與 Express Pass 以官方 App／票務資訊為準。</p></div>
+<div class="stop"><div class="time">閉園後</div><b>返回酒店休息</b><p>依當日列車班次原路返回，這天不再安排其他購物。</p></div></div></details>
+<details class="day" data-city="osaka" ><summary><span class="dn">DAY 04</span><span><div class="dt">輕鬆日・大阪城・天神橋筋商店街</div><div class="dd">26 MAY · WED · OSAKA</div></span><span class="plus">＋</span></summary><div class="content">
+<div class="stop"><div class="time">09:30</div><b>大阪城公園</b><p>以公園、護城河及天守閣外觀為主；若想入天守閣再預留參觀時間。</p><div class="route">Shinsaibashi → 御堂筋線至 Hommachi → 中央線至 Tanimachi 4-chome，再步行前往。</div></div>
+<div class="stop"><div class="time">12:00</div><b>午餐・移動至天神橋筋</b><p>找一間定食或商店街小食，今天放慢腳步，不塞太多景點。</p></div>
+<div class="stop"><div class="time">13:30–16:30</div><b>天神橋筋商店街</b><p>日本長商店街之一，適合逛小店、零食、咖啡及日常生活用品；走累了就找咖啡店休息。</p><div class="route">可由 Osaka Metro 谷町線／堺筋線沿線車站進出，依想逛的路段決定起點。</div></div>
+<div class="stop"><div class="time">傍晚</div><b>返回心齋橋・自由晚餐</b><p>回酒店休息或在心齋橋附近吃晚餐。</p></div></div></details>
+<details class="day" data-city="kyoto" ><summary><span class="dn">DAY 05</span><span><div class="dt">京都一日・東山・清水寺・祇園</div><div class="dd">27 MAY · THU · KYOTO</div></span><span class="plus">＋</span></summary><div class="content">
+<div class="stop"><div class="time">07:30</div><b>大阪出發前往京都</b><p>早餐後出發，建議早一點到清水寺一帶。</p><div class="route">Shinsaibashi → 御堂筋線至 Umeda → JR Osaka → JR Kyoto Line 至 Kyoto；再依目的地轉巴士／鐵路。</div></div>
+<div class="stop"><div class="time">09:30</div><b>清水寺・二年坂・三年坂</b><p>寺院、石板街、傳統小店與甜點；上坡路段較多，穿舒適鞋。</p></div>
+<div class="stop"><div class="time">中午</div><b>東山午餐・抹茶甜點</b><p>可安排湯豆腐、京野菜定食或抹茶甜點。</p></div>
+<div class="stop"><div class="time">下午</div><b>八坂神社・祇園・花見小路</b><p>慢慢走訪祇園街區；若時間充裕可延伸至四條河原町或錦市場。</p></div>
+<div class="stop"><div class="time">傍晚</div><b>返回大阪</b><p>由京都市區搭鐵路返回大阪，實際路線視最後停留地點而定。</p></div></div></details>
+<details class="day" data-city="kobe" ><summary><span class="dn">DAY 06</span><span><div class="dt">神戶一日・北野・南京町・港口</div><div class="dd">28 MAY · FRI · KOBE</div></span><span class="plus">＋</span></summary><div class="content">
+<div class="stop"><div class="time">08:30</div><b>大阪前往神戶三宮</b><p>建議搭 JR 神戶線，抵達後依步行體力安排北野。</p><div class="route">Shinsaibashi → 御堂筋線至 Umeda → JR Osaka → JR Kobe Line 至 Sannomiya。</div></div>
+<div class="stop"><div class="time">10:00</div><b>北野異人館街</b><p>洋館街區、坡道與咖啡廳；挑選有興趣的館舍參觀即可。</p></div>
+<div class="stop"><div class="time">12:30</div><b>神戶牛午餐</b><p>可預先查詢三宮一帶鐵板燒套餐及預約時段。</p></div>
+<div class="stop"><div class="time">14:30</div><b>南京町・美利堅公園</b><p>中華街小吃、港邊散步及拍照。</p></div>
+<div class="stop"><div class="time">17:30</div><b>Harborland・神戶港夜景</b><p>欣賞港灣景色後搭 JR 返回大阪。</p></div></div></details>
+<details class="day" data-city="osaka" ><summary><span class="dn">DAY 07</span><span><div class="dt">自由日・木津市場・難波八阪・通天閣・阿倍野</div><div class="dd">29 MAY · SAT · OSAKA</div></span><span class="plus">＋</span></summary><div class="content">
+<div class="stop"><div class="time">早上</div><b>木津市場 Kizu Market</b><p>想逛批發市場就早點出發，看看海鮮、熟食與市場氣氛；請在出發前確認 2027/5/29 當日開市及各店營業安排，市場並非每個攤位都全天營業。</p><div class="route">市場地址：2-2-8 Shikitsuhigashi, Naniwa-ku, Osaka。</div></div>
+<div class="stop"><div class="time">上午</div><b>難波八阪神社</b><p>參觀醒目的獅子殿，拍照停留。</p></div>
+<div class="stop"><div class="time">中午至下午</div><b>新世界・通天閣</b><p>串炸午餐、復古街區散步；通天閣展望台是否入場可當天決定。</p></div>
+<div class="stop"><div class="time">下午至傍晚</div><b>阿倍野・阿倍野 Harukas</b><p>可逛商場、百貨或視天氣加上展望台；若走累了，這裡也適合安排咖啡休息。</p></div>
+<div class="stop"><div class="time">晚上</div><b>自由晚餐・回酒店</b><p>依體力選擇在阿倍野或難波用餐，不必硬塞其他景點。</p></div></div></details>
+<details class="day" data-city="osaka" ><summary><span class="dn">DAY 08</span><span><div class="dt">梅田日・任天堂・寶可夢・CAPCOM・空中庭園</div><div class="dd">30 MAY · SUN · OSAKA</div></span><span class="plus">＋</span></summary><div class="content">
+<div class="stop"><div class="time">10:00</div><b>LUCUA SOUTH 13F・角色商店區</b><p>Nintendo OSAKA、Pokémon Center OSAKA、CAPCOM STORE & CAFE UMEDA 集中在大阪站旁同一樓層，適合一次逛完；出發前留意是否有整理券／入場安排。</p><div class="route">由 Shinsaibashi 搭御堂筋線至 Umeda，步行前往 JR Osaka Station 南側 LUCUA SOUTH。</div></div>
+<div class="stop"><div class="time">中午</div><b>梅田午餐・百貨地下美食街</b><p>可在梅田百貨或車站商場用餐，順便逛食品樓層。</p></div>
+<div class="stop"><div class="time">下午</div><b>梅田購物・自由時間</b><p>可選 LUCUA、Grand Front Osaka、阪急／阪神百貨或茶屋町；不需要全部走完。</p></div>
+<div class="stop"><div class="time">傍晚</div><b>梅田藍天大廈・空中庭園展望台</b><p>安排日落前後看城市景色；門票、營業時間與日落時間出發前再確認。</p></div>
+<div class="stop"><div class="time">晚上</div><b>最後晚餐・回酒店整理行李</b><p>回心齋橋整理戰利品，確認隔天早班機交通。</p></div></div></details>
+<details class="day" data-city="osaka" ><summary><span class="dn">DAY 09</span><span><div class="dt">回程日・KIX → KUL</div><div class="dd">31 MAY · MON · OSAKA</div></span><span class="plus">＋</span></summary><div class="content">
+<div class="stop"><div class="time">清晨</div><b>酒店退房</b><p>MH053 09:40 起飛，建議預留充足時間到機場辦理登機、安檢及退稅海關確認。</p></div>
+<div class="stop"><div class="time">交通待確認</div><b>前往關西國際機場</b><p>酒店 → Shinsaibashi／Namba → 南海電鐵 → KIX。需核對 2027/5/31 首班車；若時間不合，預先安排計程車或接送。</p></div>
 <div class="stop"><div class="time">09:40</div><b>MH053 起飛</b><p>KIX → KUL，預計15:45抵達。</p></div></div></details>
 </div></section>
-<div class="note"><div class="label">IMPORTANT NOTES</div><p>5月23日清晨先寄放行李，不預訂提早入住；寄放服務請出發前向酒店確認。5月31日清晨交通必須提前核實。2027年景點開放時間、USJ入園安排與鐵路班次尚未最終確認。</p></div>
+
+<section id="backup-options"><div class="label">OPTIONAL IDEAS · FLEXIBLE BACKUP</div><h2>備選景點・看體力再決定</h2><p>以下保留原本行程裡沒有排進主線的地方，不需要全部塞進去；可以依天氣、體力和購物進度替換。</p>
+<div class="resource-grid">
+ <div class="resource-card"><b>京都備選 A｜伏見稻荷・錦市場・鴨川</b><p>如果想看千本鳥居，可把 Day 5 的東山路線改成早上伏見稻荷、下午錦市場與鴨川；一天建議二選一主線，不要兩套全塞。</p><a href="https://www.google.com/maps/search/?api=1&query=Fushimi+Inari+Taisha+Nishiki+Market+Kamo+River+Kyoto" target="_blank" rel="noopener">查看地圖 ↗</a></div>
+ <div class="resource-card"><b>京都備選 B｜嵐山竹林・天龍寺・渡月橋</b><p>想看竹林與河景時，可用嵐山取代 Day 5 東山；嵐山與清水寺分屬不同方向，建議分開安排。</p><a href="https://www.google.com/maps/search/?api=1&query=Arashiyama+Bamboo+Grove+Tenryuji+Togetsukyo+Kyoto" target="_blank" rel="noopener">查看地圖 ↗</a></div>
+ <div class="resource-card"><b>大阪備選｜中之島・梅田百貨／空中庭園</b><p>若 Day 4 想再輕鬆一點，可把天神橋筋改成中之島河岸散步；梅田購物與空中庭園則集中在 Day 8。</p><a href="https://www.google.com/maps/search/?api=1&query=Nakanoshima+Park+Osaka" target="_blank" rel="noopener">查看地圖 ↗</a></div>
+ <div class="resource-card"><b>大阪備選｜黑門市場・難波・道頓堀</b><p>如果 Day 7 木津市場未開市，或你想逛一般觀光市場，可改去黑門市場；也可把黑門市場當作 Day 2 日本橋購物前後的午餐備案。</p><a href="https://www.google.com/maps/search/?api=1&query=Kuromon+Ichiba+Market+Osaka" target="_blank" rel="noopener">查看地圖 ↗</a></div>
+</div></section>
+
+<div class="note"><div class="label">IMPORTANT NOTES</div><p>5月23日清晨先寄放行李，不預訂提早入住；寄放服務請出發前向酒店確認。5月31日清晨交通必須提前核實。2027年景點開放時間、USJ入園安排、木津市場開市日與鐵路班次尚未最終確認。</p></div>
+
+<section id="shopping-budget"><div class="label">SHOPPING BUDGET · JPY & MYR</div><h2>購物預算參考</h2><p>把想買的東西先分配一個預算，逛街時比較容易控制花費。以下是整趟旅程的參考額度，不需要每一項都買滿。</p>
+<table class="budget-table"><thead><tr><th>項目</th><th>日幣 JPY</th><th>馬幣 MYR 約</th></tr></thead><tbody>
+<tr><td>衣服／日本品牌<br><small>GU、UNIQLO、BEAMS 等</small></td><td>¥20,000–35,000</td><td>RM514–900</td></tr>
+<tr><td>鞋子<br><small>Onitsuka Tiger、On 等</small></td><td>¥15,000–30,000</td><td>RM386–771</td></tr>
+<tr><td>Figure／動漫周邊</td><td>¥10,000–25,000</td><td>RM257–643</td></tr>
+<tr><td>藥妝／零食／生活雜貨<br><small>Loft、Hands、3COINS 等</small></td><td>¥8,000–15,000</td><td>RM206–386</td></tr>
+<tr><td>海鮮市場／小吃</td><td>¥5,000–10,000</td><td>RM129–257</td></tr>
+<tr class="budget-total"><td>合計參考</td><td>¥58,000–115,000</td><td>RM1,491–2,957</td></tr>
+</tbody></table>
+<div class="note"><b style="font:12px Arial;color:#403a33">匯率換算備註</b><p style="margin-top:5px">暫以 ¥1 ≈ RM0.0257 估算，實際換匯、刷卡匯率及手續費可能不同；出發前再更新匯率。這份預算只計購物、零食及市場小吃，不包含機票、住宿、交通、USJ 門票及一般正餐。</p></div>
+<p class="budget-note">小提醒：這是彈性預算，不是消費目標。若鞋子或衣服買得比較多，可以從 Figure、雜貨等項目調整；也可以把沒花完的預算留作最後一天補買。</p>
+</section>
 
 <section id="taxfree"><div class="label">JAPAN TAX REFUND · MAY 2027</div><h2>日本退稅攻略</h2>
 <div class="note"><b style="font:13px Arial;color:#403a33">重要：2026年11月1日起改為「先付後退」</b><p style="margin-top:6px">購物時先付含稅價格，離境時完成海關確認後，再由商店／退款服務商退回相當於消費稅的金額。每間店當日未稅購物總額需達 ¥5,000 才符合基本門檻；退款方式及手續費依店家而異。</p></div>
@@ -163,116 +199,15 @@ main{max-width:1050px;margin:auto;padding:32px clamp(16px,5vw,52px) 60px}.intro{
  tabs.forEach(t=>t.onclick=()=>{tabs.forEach(x=>x.classList.toggle('active',x===t));days.forEach(d=>d.hidden=t.dataset.filter!=='all'&&d.dataset.city!==t.dataset.filter)});
 
  const dayExtras = [
-  {
-   area:'Dotonbori & Shinsaibashi',
-   mapQuery:'Dotonbori Ebisubashi Shinsaibashi Osaka Japan',
-   origin:'Vessel Inn Shinsaibashi, Osaka, Japan', destination:'Dotonbori, Osaka, Japan',
-   waypoints:['Shinsaibashi-suji Shopping Street, Osaka, Japan','Amerikamura, Osaka, Japan'], mode:'walking',
-   photos:[
-    ['https://tripglaze.com/images/blog/osaka-dotonbori-night-food-street.jpg','道頓堀霓虹夜景'],
-    ['https://blog.lemarchejaponais.fr/images/takoyaki-boulettes-poulpe_1037.jpeg','大阪章魚燒']
-   ],
-   foods:[
-    ['🐙','章魚燒 Takoyaki','先在道頓堀試一份熱騰騰章魚燒；可搜尋 Takoyaki Doraku Wanaka。','Takoyaki Doraku Wanaka Namba Osaka'],
-    ['🥞','大阪燒 Okonomiyaki','大阪經典鐵板料理，可考慮 Mizuno 或 Chibo，排隊情況以當天為準。','Okonomiyaki Mizuno Dotonbori Osaka']
-   ]
-  },
-  {
-   area:'Universal City', mapQuery:'Universal Studios Japan Universal Citywalk Osaka Japan',
-   origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Universal Studios Japan, Osaka, Japan',waypoints:['Universal Citywalk Osaka, Japan'],mode:'transit',
-   photos:[
-    ['https://cdn-imgix.headout.com/media/images/f52e3172ea96967510a4ae2149df1450-19689-osaka-universal-express-pass-4-the-flying-dinosaur-universal-studios-japan-tickets-01.jpg','哈利波特魔法世界與 Super Nintendo World'],
-    ['https://rimage.gnst.jp/rest/img/c7jsvaj50000/s_001p.jpg?t=1752805986','日式鐵板牛排料理']
-   ],
-   foods:[
-    ['🍄','園區主題餐點','可把 Mario 主題餐點、園區小食與 Butterbeer 當作今天的美食體驗。','Universal Studios Japan restaurants food'],
-    ['🥩','CityWalk 牛排飯','出園後可到 Universal Citywalk 的 Gyukatsu Kyoto Katsugyu，吃日式炸牛排。','GYUKATSU Kyoto Katsugyu Universal Citywalk Osaka']
-   ]
-  },
-  {
-   area:'Osaka Castle · Nakanoshima · Umeda',mapQuery:'Osaka Castle Nakanoshima Umeda Sky Building Osaka Japan',
-   origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Umeda Sky Building, Osaka, Japan',waypoints:['Osaka Castle, Osaka, Japan','Nakanoshima Park, Osaka, Japan'],mode:'transit',
-   photos:[
-    ['https://monthly48.com/storage/article/610/6kGQtXBQtw7O2LS4OeFMMrm3WuAtzRME1uGpoQqg.jpeg','大阪城與城市天際線'],
-    ['https://www.celebritycruises.com/blog/content/uploads/2025/01/osaka-food-okonomiyaki.jpg','大阪燒 Okonomiyaki']
-   ],
-   foods:[
-    ['🍱','中之島午餐','河岸咖啡廳或日式定食，安排一頓舒服的午餐。','restaurants near Nakanoshima Park Osaka'],
-    ['🥢','梅田地下街美食','傍晚可逛梅田百貨地下食品街，找 ikayaki、便當或甜點。','Hankyu Umeda depachika ikayaki Osaka']
-   ]
-  },
-  {
-   area:'Higashiyama · Gion',mapQuery:'Kiyomizu dera Ninenzaka Yasaka Shrine Gion Kyoto Japan',
-   origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Gion, Kyoto, Japan',waypoints:['Kiyomizu-dera, Kyoto, Japan','Ninenzaka, Kyoto, Japan','Yasaka Shrine, Kyoto, Japan'],mode:'transit',
-   photos:[
-    ['https://www.irishexaminer.com/cms_media/module_img/9883/4941917_15_articleinline_iStock-1384565046.jpg','清水寺周邊東山石板街'],
-    ['https://tabiiro.jp/client_gourmet/gourmet/s/311462-kyoto-kazurano-seisyuan/menu/217498/img1-1633410448021-2795.jpg','京都風日式豆腐與蕎麥套餐']
-   ],
-   foods:[
-    ['🍵','抹茶甜點','在二年坂、三年坂一帶找抹茶霜淇淋、蕨餅或和菓子。','matcha dessert Ninenzaka Kyoto'],
-    ['🍲','京都湯豆腐','東山一帶可安排湯豆腐或京野菜定食，適合慢慢吃。','yudofu restaurant Kiyomizu Gion Kyoto']
-   ]
-  },
-  {
-   area:'Fushimi Inari · Nishiki · Kamo River',mapQuery:'Fushimi Inari Taisha Nishiki Market Kamo River Kyoto Japan',
-   origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Kamo River, Kyoto, Japan',waypoints:['Fushimi Inari Taisha, Kyoto, Japan','Nishiki Market, Kyoto, Japan'],mode:'transit',
-   photos:[
-    ['https://www.celebritycruises.com/blog/content/uploads/2022/01/japan-landmarks-fushimi-inari-taisha-kyoto.jpg','伏見稻荷千本鳥居'],
-    ['https://a0.muscache.com/im/pictures/lombard/MtTemplate-274389-active_media/original/882b1220-8ce7-4b76-9f9a-7fcc371f99e9.jpg','錦市場街頭小食']
-   ],
-   foods:[
-    ['🥚','玉子燒與市場小食','錦市場可試玉子燒、漬物、豆乳甜點及各式小份量小食。','Nishiki Market Kyoto food stalls'],
-    ['🦊','稻荷壽司・狐狸烏龍麵','伏見稻荷周邊可留意稻荷壽司與 kitsune udon。','kitsune udon near Fushimi Inari Taisha Kyoto']
-   ]
-  },
-  {
-   area:'Arashiyama Bamboo Grove · Tenryuji · Togetsukyo',mapQuery:'Arashiyama Bamboo Grove Tenryuji Togetsukyo Bridge Kyoto Japan',
-   origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Togetsukyo Bridge, Kyoto, Japan',waypoints:['Arashiyama Bamboo Grove, Kyoto, Japan','Tenryu-ji, Kyoto, Japan'],mode:'transit',
-   photos:[
-    ['https://mediaim.expedia.com/destination/2/6f024abcd72a361f2ef55a471e0d51a6.jpg','嵐山竹林小徑'],
-    ['https://cdn-ak.f.st-hatena.com/images/fotolife/Y/Yukonosuke/20200817/20200817175119.jpg','渡月橋河景與蕎麥麵']
-   ],
-   foods:[
-    ['🍜','嵐山蕎麥麵','渡月橋旁可安排蕎麥麵與河景午餐，例如搜尋 Arashiyama Yoshimura。','Arashiyama Yoshimura soba Kyoto'],
-    ['🥩','日式炸牛排','想吃肉類定食，可查看竹林入口附近的 Gyukatsu Kyoto Katsugyu 嵐山店。','Gyukatsu Kyoto Katsugyu Arashiyama Kyoto']
-   ]
-  },
-  {
-   area:'Kitano · Sannomiya · Nankinmachi · Harborland',mapQuery:'Kitano Ijinkan Nankinmachi Kobe Harborland Port Tower Japan',
-   origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Kobe Harborland, Kobe, Japan',waypoints:['Kitano Ijinkan, Kobe, Japan','Mouriya Sannomiya, Kobe, Japan','Nankinmachi, Kobe, Japan'],mode:'transit',
-   photos:[
-    ['https://cdn-ak.f.st-hatena.com/images/fotolife/r/ritocamp/20220730/20220730134229.jpg','神戶南京町街景'],
-    ['https://rimage.gnst.jp/rest/img/c7jsvaj50000/s_001p.jpg?t=1752805986','神戶牛鐵板燒']
-   ],
-   foods:[
-    ['🥩','神戶牛鐵板燒','想吃經典神戶牛，可考慮 Sannomiya 的 Mouriya；套餐與價格先查詢。','Kobe Beef Steak Restaurant Mouriya Sannomiya Kobe'],
-    ['🥟','南京町街頭小吃','中華街可吃豬肉包、煎餃及小份量街頭小食。','Nankinmachi Kobe street food']
-   ]
-  },
-  {
-   area:'Kuromon Market · Namba · Shinsaibashi',mapQuery:'Kuromon Ichiba Market Namba Shinsaibashi Osaka Japan',
-   origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Shinsaibashi-suji Shopping Street, Osaka, Japan',waypoints:['Kuromon Ichiba Market, Osaka, Japan','Namba, Osaka, Japan'],mode:'walking',
-   photos:[
-    ['https://a0.muscache.com/im/pictures/lombard/MtTemplate-274389-active_media/original/882b1220-8ce7-4b76-9f9a-7fcc371f99e9.jpg','市場海鮮與串物'],
-    ['https://blog.lemarchejaponais.fr/images/takoyaki-boulettes-poulpe_1037.jpeg','大阪街頭章魚燒']
-   ],
-   foods:[
-    ['🍣','黑門市場小吃','可按胃口分食玉子燒、烤海鮮、刺身或和牛串；各攤營業時間不同。','Kuromon Ichiba Market Osaka food'],
-    ['🍰','大阪甜點伴手禮','回心齋橋前可找起司蛋糕、布丁或日式甜點。','Rikuro Ojisan no Mise Namba Osaka']
-   ]
-  },
-  {
-   area:'Vessel Inn · Namba · Kansai International Airport',mapQuery:'Kansai International Airport Terminal 1 Osaka Japan',
-   origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Kansai International Airport Terminal 1, Osaka, Japan',waypoints:['Nankai Namba Station, Osaka, Japan'],mode:'transit',
-   photos:[
-    ['https://tripglaze.com/images/blog/osaka-dotonbori-night-food-street.jpg','大阪旅程回憶'],
-    ['https://www.celebritycruises.com/blog/content/uploads/2025/01/osaka-food-okonomiyaki.jpg','最後一份大阪燒']
-   ],
-   foods:[
-    ['🍱','機場便當・日式定食','若時間充裕，可在 KIX 航廈內找便當、烏龍麵或咖哩；先辦理登機與安檢。','Kansai International Airport restaurants Terminal 1'],
-    ['☕','登機前咖啡','預留時間買飲料與小點心，並留意登機閘口。','Kansai International Airport Terminal 1 cafe']
-   ]
-  }
+  {area:'Dotonbori & Shinsaibashi',mapQuery:'Dotonbori Ebisubashi Shinsaibashi Osaka Japan',origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Dotonbori, Osaka, Japan',waypoints:['Shinsaibashi-suji Shopping Street, Osaka, Japan','Amerikamura, Osaka, Japan'],mode:'walking',photos:[['https://tripglaze.com/images/blog/osaka-dotonbori-night-food-street.jpg','道頓堀霓虹夜景'],['https://blog.lemarchejaponais.fr/images/takoyaki-boulettes-poulpe_1037.jpeg','大阪章魚燒']],foods:[['🐙','章魚燒 Takoyaki','道頓堀經典街頭小食，第一晚先吃一份。','Takoyaki Dotonbori Osaka'],['🥞','大阪燒 Okonomiyaki','可考慮 Mizuno 或 Chibo，排隊情況以當天為準。','Okonomiyaki Dotonbori Osaka']]},
+  {area:'Nipponbashi Den Den Town · Shinsaibashi character shops',mapQuery:'Nipponbashi Den Den Town Osaka; Daimaru Shinsaibashi; Shinsaibashi PARCO',origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Daimaru Shinsaibashi, Osaka, Japan',waypoints:['Nipponbashi Den Den Town, Osaka, Japan','CAPCOM STORE OSAKA Shinsaibashi PARCO, Osaka, Japan','Don Quijote Dotonbori, Osaka, Japan'],mode:'walking',photos:[['https://a0.muscache.com/im/pictures/lombard/MtTemplate-274389-active_media/original/882b1220-8ce7-4b76-9f9a-7fcc371f99e9.jpg','日本橋動漫與模型店'],['https://cdn-ak.f.st-hatena.com/images/fotolife/Y/Yukonosuke/20200817/20200817175119.jpg','心齋橋購物街']],foods:[['🧸','Figure・動漫尋寶','Den Den Town 可逛 Animate、Jungle、Surugaya 等，留意新品與二手品的品相。','Animate Osaka Nipponbashi Japan'],['🎮','寶可夢・CAPCOM 官方周邊','Pokémon Center OSAKA DX 在大丸心齋橋 9F；CAPCOM STORE OSAKA 在心齋橋 PARCO 6F。','Pokemon Center Osaka DX Daimaru Shinsaibashi']]},
+  {area:'Universal Studios Japan',mapQuery:'Universal Studios Japan Universal Citywalk Osaka Japan',origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Universal Studios Japan, Osaka, Japan',waypoints:['Universal Citywalk Osaka, Japan'],mode:'transit',photos:[['https://cdn-imgix.headout.com/media/images/f52e3172ea96967510a4ae2149df1450-19689-osaka-express-pass.jpg','哈利波特魔法世界與 Super Nintendo World'],['https://rimage.gnst.jp/rest/img/c7jsvaj50000/s_001p.jpg?t=1752805986','園區主題餐點']],foods:[['🍄','園區主題餐點','Mario 主題餐點、園區小食與 Butterbeer 可當作今天的美食體驗。','Universal Studios Japan restaurants food'],['🍽️','CityWalk 晚餐','若出園後還有體力，可在 Universal Citywalk 找餐廳用餐。','Universal Citywalk Osaka restaurants']]},
+  {area:'Osaka Castle · Tenjinbashisuji Shopping Street',mapQuery:'Osaka Castle Park Osaka; Tenjinbashisuji Shopping Street Osaka',origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Tenjinbashisuji Shopping Street, Osaka, Japan',waypoints:['Osaka Castle Park, Osaka, Japan'],mode:'transit',photos:[['https://monthly48.com/storage/article/610/6kGQtXBQtw7O2LS4OeFMMrm3WuAtzRME1uGpoQqg.jpeg','大阪城公園'],['https://www.celebritycruises.com/blog/content/uploads/2025/01/osaka-food-okonomiyaki.jpg','商店街小食']],foods:[['🏯','大阪城周邊散步','公園、護城河與天守閣外觀，按體力決定是否入館。','Osaka Castle Park Japan'],['🍡','天神橋筋商店街','逛小店、咖啡與日式小食，今天以輕鬆為主。','Tenjinbashisuji Shopping Street Osaka']]},
+  {area:'Kyoto Higashiyama · Kiyomizu · Gion',mapQuery:'Kiyomizu dera Ninenzaka Yasaka Shrine Gion Kyoto Japan',origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Gion, Kyoto, Japan',waypoints:['Kiyomizu-dera, Kyoto, Japan','Ninenzaka, Kyoto, Japan','Yasaka Shrine, Kyoto, Japan'],mode:'transit',photos:[['https://www.irishexaminer.com/cms_media/module_img/9883/4941917_15_articleinline_iStock-1384565046.jpg','清水寺周邊東山石板街'],['https://tabiiro.jp/client_gourmet/gourmet/s/311462-kyoto-kazurano-seisyuan/menu/217498/img1-1633410448021-2795.jpg','京都風日式豆腐與蕎麥套餐']],foods:[['🍵','抹茶甜點','二年坂、三年坂一帶可找抹茶霜淇淋、蕨餅或和菓子。','matcha dessert Ninenzaka Kyoto'],['🍲','京都湯豆腐','東山一帶可安排湯豆腐或京野菜定食。','yudofu restaurant Kiyomizu Gion Kyoto']]},
+  {area:'Kobe Kitano · Nankinmachi · Harborland',mapQuery:'Kitano Ijinkan Nankinmachi Kobe Harborland Port Tower Japan',origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Kobe Harborland, Kobe, Japan',waypoints:['Kitano Ijinkan, Kobe, Japan','Nankinmachi, Kobe, Japan','Meriken Park, Kobe, Japan'],mode:'transit',photos:[['https://cdn-ak.f.st-hatena.com/images/fotolife/r/ritocamp/20220730/20220730134229.jpg','神戶南京町街景'],['https://rimage.gnst.jp/rest/img/c7jsvaj50000/s_001p.jpg?t=1752805986','神戶牛鐵板燒']],foods:[['🥩','神戶牛鐵板燒','可考慮三宮一帶店家，套餐與價格先查詢及預約。','Kobe beef steak Sannomiya Kobe'],['🥟','南京町街頭小吃','中華街可吃豬肉包、煎餃及小份量街頭小食。','Nankinmachi Kobe street food']]},
+  {area:'Kizu Market · Namba Yasaka · Shinsekai · Abeno',mapQuery:'Kizu Wholesale Market Osaka; Namba Yasaka Shrine; Tsutenkaku; Abeno Harukas',origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Abeno Harukas, Osaka, Japan',waypoints:['Kizu Wholesale Market, Osaka, Japan','Namba Yasaka Shrine, Osaka, Japan','Tsutenkaku, Osaka, Japan'],mode:'transit',photos:[['https://a0.muscache.com/im/pictures/lombard/MtTemplate-274389-active_media/original/882b1220-8ce7-4b76-9f9a-7fcc371f99e9.jpg','大阪市場海鮮與熟食'],['https://tripglaze.com/images/blog/osaka-dotonbori-night-food-street.jpg','新世界與大阪街景']],foods:[['🦀','木津市場海鮮','早上逛市場，依當日開市與攤位營業情況選擇海鮮或熟食。','Kizu Wholesale Market Osaka Japan'],['🍢','新世界串炸','通天閣周邊可安排串炸午餐，之後再去阿倍野。','Kushikatsu Shinsekai Tsutenkaku Osaka']]},
+  {area:'Umeda · LUCUA SOUTH · Umeda Sky Building',mapQuery:'LUCUA SOUTH Osaka Nintendo Osaka Pokemon Center Osaka CAPCOM STORE UMEDA; Umeda Sky Building',origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Umeda Sky Building, Osaka, Japan',waypoints:['Nintendo OSAKA, LUCUA SOUTH 13F, Osaka, Japan','Pokémon Center OSAKA, LUCUA SOUTH 13F, Osaka, Japan','CAPCOM STORE & CAFE UMEDA, Osaka, Japan'],mode:'transit',photos:[['https://monthly48.com/storage/article/610/6kGQtXBQtw7O2LS4OeFMMrm3WuAtzRME1uGpoQqg.jpeg','梅田城市景觀'],['https://www.celebritycruises.com/blog/content/uploads/2025/01/osaka-food-okonomiyaki.jpg','梅田美食與百貨地下街']],foods:[['🎮','LUCUA SOUTH 13F 角色商店','Nintendo OSAKA、Pokémon Center OSAKA、CAPCOM STORE & CAFE UMEDA 集中在同一樓層。','LUCUA SOUTH 13F Osaka Japan'],['🌆','梅田空中庭園','建議日落前後前往，入場時間及門票以官方資訊為準。','Umeda Sky Building Osaka Japan']]},
+  {area:'Vessel Inn · Namba · Kansai International Airport',mapQuery:'Kansai International Airport Terminal 1 Osaka Japan',origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Kansai International Airport Terminal 1, Osaka, Japan',waypoints:['Nankai Namba Station, Osaka, Japan'],mode:'transit',photos:[['https://tripglaze.com/images/blog/osaka-dotonbori-night-food-street.jpg','大阪旅程回憶'],['https://www.celebritycruises.com/blog/content/uploads/2025/01/osaka-food-okonomiyaki.jpg','最後一份大阪燒']],foods:[['🍱','機場便當・日式定食','若時間充裕，可在 KIX 航廈內找便當、烏龍麵或咖哩；先辦理登機與安檢。','Kansai International Airport restaurants Terminal 1'],['☕','登機前咖啡','預留時間買飲料與小點心，並留意登機閘口。','Kansai International Airport Terminal 1 cafe']]}
  ];
  function mapsSearch(q){return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);}
  function mapsDirections(d){const p=new URLSearchParams({api:'1',origin:d.origin,destination:d.destination,travelmode:d.mode});if(d.waypoints?.length)p.set('waypoints',d.waypoints.join('|'));return 'https://www.google.com/maps/dir/?'+p.toString();}
