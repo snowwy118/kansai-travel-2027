@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f7f4ed">
+<title>OSAKA TRAVEL JOURNAL · MAY 2027</title>
+<style>
+:root{--bg:#f7f4ed;--paper:#fffdf8;--ink:#403a33;--muted:#8a8176;--line:#e7e0d5;--sage:#e8eeea;--accent:#58716c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,"Noto Serif TC",serif}
+button,input,textarea{font:inherit}button{cursor:pointer}.hero{min-height:490px;padding:30px clamp(22px,7vw,80px);display:flex;flex-direction:column;justify-content:space-between;color:white;background:linear-gradient(0deg,#202b2caa,transparent 80%),url('https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1800&q=85') center/cover}
+.eyebrow,.label,.meta{font:10px Arial,sans-serif;letter-spacing:2.5px}.hero h1{font-size:clamp(44px,9vw,82px);font-weight:400;line-height:.98;letter-spacing:-2px;margin:0}.hero .date{font:12px Arial;letter-spacing:2.5px;margin-top:18px}.hero .sub{font:12px/1.8 Arial;letter-spacing:1.3px}
+main{max-width:1050px;margin:auto;padding:32px clamp(16px,5vw,52px) 60px}.intro{padding:5px 0 20px}.label{color:var(--muted);text-transform:uppercase}h2{font-size:29px;font-weight:400;margin:8px 0 12px}h3{font-size:18px;font-weight:400;margin:0 0 8px}p{font:13px/1.8 Arial,sans-serif;color:#756c62;margin:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);border-block:1px solid var(--line);padding:17px 0;margin:20px 0 30px;text-align:center}.stats strong{font-size:25px;font-weight:400;display:block}.stats small{font:9px Arial;color:var(--muted);letter-spacing:1.5px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:17px;margin:12px 0}.flights{display:grid;grid-template-columns:1fr 35px 1fr;align-items:center;gap:8px}.flights strong{font-size:25px;font-weight:400;display:block}.flights small{font:10px Arial;color:var(--muted)}.right{text-align:right}.hotel{background:var(--sage);border-radius:13px;padding:18px;margin:15px 0}.hotel h3{font-size:20px}.hotel p{color:#64716a}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.toolbar button,.tabs button{border:1px solid var(--line);border-radius:24px;padding:10px 14px;background:transparent;color:var(--muted);font:11px Arial}.toolbar .primary{background:#50686a;color:white;border-color:#50686a}.tabs{display:flex;gap:7px;overflow:auto;padding:4px 0 13px}.tabs button.active{background:#50686a;color:white;border-color:#50686a}
+.day{border:1px solid var(--line);border-radius:12px;background:var(--paper);margin:9px 0;overflow:hidden}.day summary{list-style:none;display:grid;grid-template-columns:48px 1fr 18px;gap:9px;align-items:center;padding:16px;cursor:pointer}.day summary::-webkit-details-marker{display:none}.dn{font:10px Arial;color:#849c98;letter-spacing:1px}.dt{font-size:16px}.dd{font:10px Arial;color:var(--muted);margin-top:4px}.plus{font:18px Arial;color:var(--muted)}.day[open] .plus{transform:rotate(45deg)}.content{padding:0 16px 17px 72px}.stop{border-left:1px solid #d9d1c6;padding:0 0 15px 14px;position:relative}.stop:before{content:"";position:absolute;left:-4px;top:4px;width:7px;height:7px;border-radius:50%;background:#8da39e}.stop:last-child{padding-bottom:0}.time{font:10px Arial;color:#879995;letter-spacing:1px;margin-bottom:4px}.stop b{font:12px Arial;font-weight:600}.stop p{font-size:11px;margin-top:4px}.route{margin-top:7px;background:#f0eee8;padding:9px;border-radius:7px;font:10px/1.7 Arial;color:#6d665d}
+.note{background:#f3ece1;border:1px solid #e8ddcb;padding:15px;border-radius:11px;margin:18px 0}.checklist label{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);font:12px Arial}.checklist label:last-child{border:0}.checklist input{accent-color:#617d77}.progress{height:4px;background:#e8e1d6;border-radius:5px;margin:10px 0}.progress span{display:block;height:4px;background:#718b84;width:0}.footer{background:var(--sage);text-align:center;padding:28px;border-radius:13px;margin-top:30px}.footer b{font-size:22px;font-weight:400}.footer small{display:block;font:9px Arial;letter-spacing:2px;color:#78867d;margin-top:8px}
+.editable[contenteditable="true"]{outline:1px dashed #8da39e;outline-offset:3px;border-radius:3px;background:#fffef9}.edit-hint{font:11px/1.6 Arial;color:var(--muted);margin:8px 0}
+@media(min-width:720px){.hero{min-height:590px}main{padding-top:45px}.content{padding-left:85px}.day summary{padding:19px 21px}}
+@media print{.toolbar,.tabs,.edit-hint,.footer button{display:none!important}body{background:white}.hero{min-height:330px;print-color-adjust:exact}.day{break-inside:avoid}.day:not([open]) .content{display:block}}
+</style>
+<!-- Cloud publishing setup: replace the two placeholders with your Supabase project values. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+</head>
+<body>
+<header class="hero">
+ <div class="eyebrow">KANSAI · JAPAN · PERSONAL TRAVEL DIARY</div>
+ <div><h1>OSAKA<br>TRAVEL<br>JOURNAL.</h1><div class="date">22 MAY — 31 MAY 2027</div></div>
+ <div class="sub">10 DAYS · 9 NIGHTS<br>OSAKA BASE · KYOTO · KOBE<br>A little journey to remember.</div>
+</header>
+<main>
+<section class="intro"><div class="label">YOUR CONFIRMED JOURNEY</div><h2>三座城市，一段春末旅行。</h2><p>以大阪心齋橋為住宿基地，慢慢探索大阪、京都與神戶。每天回到同一間酒店，不用中途搬行李。</p></section>
+<div class="stats"><div><strong>10</strong><small>DAYS</small></div><div><strong>08</strong><small>HOTEL NIGHTS</small></div><div><strong>03</strong><small>CITIES</small></div></div>
+<section><div class="label">FLIGHT DETAILS</div><h2>航班資料</h2>
+<div class="panel"><div class="label">OUTBOUND · MH052 · 22 MAY</div><div class="flights"><div><strong>22:25</strong><small>KUL · 22 MAY 2027</small></div><div style="text-align:center">✈</div><div class="right"><strong>05:55</strong><small>KIX · 23 MAY 2027</small></div></div><p style="margin-top:8px">Malaysia Airlines · Overnight flight</p></div>
+<div class="panel"><div class="label">RETURN · MH053 · 31 MAY</div><div class="flights"><div><strong>09:40</strong><small>KIX · 31 MAY 2027</small></div><div style="text-align:center">✈</div><div class="right"><strong>15:45</strong><small>KUL · 31 MAY 2027</small></div></div><p style="margin-top:8px">Malaysia Airlines · Monday</p></div>
+<div class="hotel"><div class="label">YOUR OSAKA HOME · 8 NIGHTS</div><h3>VESSEL INN SHINSAIBASHI</h3><p>2-12-11 Minamisenba, Chuo Ward, Osaka<br>23 May check-in · 31 May check-out<br>1 room · Single non-smoking<br>清晨抵達先寄放行李，下午再辦理入住。</p></div></section>
+<section><div class="label">10 DAYS, AT A GLANCE</div><h2>每日行程與交通</h2><p>點選日期展開路線。編輯模式可直接修改行程文字，儲存後會保留在目前這個瀏覽器。</p>
+<div class="toolbar"><button class="primary" id="loginBtn">管理員登入</button><button id="editBtn" disabled>開始編輯</button><button id="saveBtn" disabled>雲端儲存</button><button id="logoutBtn" hidden>登出</button><button id="printBtn">列印 / 存成 PDF</button></div><div class="panel" id="authPanel" hidden><h3>私人管理登入</h3><p>只有獲授權的管理員可以修改公開行程。</p><input id="adminEmail" type="email" placeholder="管理員 Email" style="width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;margin:8px 0"><input id="adminPassword" type="password" placeholder="密碼" style="width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;margin:0 0 8px"><button class="primary" id="signInBtn">登入</button><p id="authMessage" style="margin-top:8px"></p></div><div class="edit-hint" id="hint">目前為瀏覽模式。按「開始編輯」即可直接點選行程文字修改。</div>
+<div class="tabs"><button class="active" data-filter="all">全部 10 天</button><button data-filter="osaka">大阪</button><button data-filter="kyoto">京都</button><button data-filter="kobe">神戶</button></div>
+<div id="days">
+<details class="day" data-city="osaka" open><summary><span class="dn">DAY 01</span><span><div class="dt">抵達大阪・心齋橋初體驗</div><div class="dd">23 MAY · SUN · OSAKA</div></span><span class="plus">＋</span></summary><div class="content">
+<div class="stop"><div class="time">05:55</div><b>抵達關西國際機場 KIX</b><p>入境、領行李、準備交通卡或手機支付。</p><div class="route">KIX → 南海電鐵 Airport Express / Rapi:t → Namba → Osaka Metro 御堂筋線 → Shinsaibashi → 酒店。車程與班次以當日資訊為準。</div></div>
+<div class="stop"><div class="time">08:30 左右</div><b>Vessel Inn Shinsaibashi 寄放行李</b><p>先寄放行李，不預訂提早入住；寄放服務及當日可辦理時間建議出發前向酒店確認。</p></div>
+<div class="stop"><div class="time">09:00–13:00</div><b>早餐・心齋橋筋商店街・美國村</b><p>安排早餐、咖啡及輕鬆逛街，第一天不排太多步行。</p><div class="route">酒店周邊步行探索。</div></div>
+<div class="stop"><div class="time">15:00 後</div><b>回酒店辦理入住・休息</b><p>下午回酒店正式入住，稍作休息。</p></div>
+<div class="stop"><div class="time">傍晚</div><b>道頓堀・戎橋</b><p>固力果招牌、河岸散步及大阪美食。</p><div class="route">由酒店步行前往道頓堀，約10–15分鐘，依路線而定。</div></div></div></details>
+<details class="day" data-city="osaka"><summary><span class="dn">DAY 02</span><span><div class="dt">Universal Studios Japan</div><div class="dd">24 MAY · MON · OSAKA</div></span><span class="plus">＋</span></summary><div class="content">
+<div class="stop"><div class="time">早上 · 提早出發</div><b>前往環球影城</b><p>建議提早抵達，入園後優先安排熱門園區。</p><div class="route">Shinsaibashi → 御堂筋線至 Umeda → 步行至 JR Osaka → JR Osaka Loop Line 至 Nishikujo → JR Yumesaki Line 至 Universal-City。</div></div>
+<div class="stop"><div class="time">全天</div><b>Super Nintendo World・哈利波特魔法世界</b><p>預留園區遊玩、餐飲、遊行與休息時間。快速通關、指定入場時段及開園時間以官方 App 與日曆為準。</p></div>
+<div class="stop"><div class="time">閉園後</div><b>返回酒店休息</b><p>Universal-City → Nishikujo → Osaka → Umeda → Shinsaibashi。</p></div></div></details>
+<details class="day" data-city="osaka"><summary><span class="dn">DAY 03</span><span><div class="dt">大阪城・中之島・梅田夜景</div><div class="dd">25 MAY · TUE · OSAKA</div></span><span class="plus">＋</span></summary><div class="content">
+<div class="stop"><div class="time">09:00</div><b>大阪城公園</b><p>天守閣外觀、護城河及公園散步；入館另預留時間。</p><div class="route">Shinsaibashi → 御堂筋線至 Hommachi → 中央線至 Tanimachi 4-chome → 步行前往。</div></div>
+<div class="stop"><div class="time">12:30</div><b>中之島午餐・河岸散步</b><p>河岸建築、咖啡廳及美術館周邊。</p></div>
+<div class="stop"><div class="time">16:00</div><b>梅田・空中庭園展望台</b><p>購物及夜景，入場時間待確認。</p><div class="route">梅田一帶搭御堂筋線返回 Shinsaibashi。</div></div></div></details>
+<details class="day" data-city="kyoto"><summary><span class="dn">DAY 04</span><span><div class="dt">京都東山・清水寺・祇園</div><div class="dd">26 MAY · WED · KYOTO</div></span><span class="plus">＋</span></summary><div class="content">
+<div class="stop"><div class="time">07:30</div><b>大阪出發前往京都</b><p>早餐後出發，建議避開高峰時段。</p><div class="route">Shinsaibashi → 御堂筋線至 Umeda → 步行至 JR Osaka → JR Kyoto Line 至 Kyoto Station。</div></div>
+<div class="stop"><div class="time">09:30</div><b>清水寺</b><p>參觀寺院與清水舞台。</p><div class="route">京都站搭巴士至 Gojo-zaka / Kiyomizu-michi，再步行上坡；路線及車況當日確認。</div></div>
+<div class="stop"><div class="time">12:00</div><b>二年坂・三年坂</b><p>傳統街道、茶屋、甜點及小店。</p></div>
+<div class="stop"><div class="time">15:00</div><b>八坂神社・祇園・花見小路</b><p>慢慢走訪東山街區，傍晚返回大阪。</p><div class="route">可步行至祇園四條站，搭京阪線至淀屋橋，再轉御堂筋線至心齋橋。</div></div></div></details>
+<details class="day" data-city="kyoto"><summary><span class="dn">DAY 05</span><span><div class="dt">伏見稻荷・錦市場・鴨川</div><div class="dd">27 MAY · THU · KYOTO</div></span><span class="plus">＋</span></summary><div class="content">
+<div class="stop"><div class="time">07:00</div><b>伏見稻荷大社</b><p>早上走千本鳥居，按體力決定登山距離。</p><div class="route">Shinsaibashi → Umeda / Osaka → JR Kyoto Line 至 Kyoto → JR Nara Line 至 Inari。</div></div>
+<div class="stop"><div class="time">11:30</div><b>錦市場</b><p>京都小食、玉子燒、漬物及甜點。</p><div class="route">由 Inari 返回 Kyoto Station，再搭地鐵烏丸線至 Shijo，步行至錦市場。</div></div>
+<div class="stop"><div class="time">14:00</div><b>四條河原町・鴨川</b><p>購物、咖啡、河岸散步。</p></div>
+<div class="stop"><div class="time">17:00</div><b>返回大阪</b><p>京都站 JR Kyoto Line → Osaka → 御堂筋線 Umeda → Shinsaibashi。</p></div></div></details>
+<details class="day" data-city="kyoto"><summary><span class="dn">DAY 06</span><span><div class="dt">嵐山竹林・天龍寺・渡月橋</div><div class="dd">28 MAY · FRI · KYOTO</div></span><span class="plus">＋</span></summary><div class="content">
+<div class="stop"><div class="time">07:30</div><b>前往嵐山</b><p>從大阪出發，建議早到竹林。</p><div class="route">Shinsaibashi → Umeda → JR Osaka → JR Kyoto Line 至 Kyoto → JR Sagano Line 至 Saga-Arashiyama。</div></div>
+<div class="stop"><div class="time">09:00</div><b>嵐山竹林・天龍寺</b><p>散步及庭園參觀，留意寺院入場時間。</p></div>
+<div class="stop"><div class="time">12:00</div><b>嵐山午餐</b><p>蕎麥麵、豆腐料理或日式定食。</p></div>
+<div class="stop"><div class="time">14:00</div><b>渡月橋・河畔</b><p>河景散步、甜點及拍照。</p></div>
+<div class="stop"><div class="time">16:30</div><b>返回大阪</b><p>Saga-Arashiyama → Kyoto → Osaka → Shinsaibashi。</p></div></div></details>
+<details class="day" data-city="kobe"><summary><span class="dn">DAY 07</span><span><div class="dt">神戶北野・南京町・港口夜景</div><div class="dd">29 MAY · SAT · KOBE</div></span><span class="plus">＋</span></summary><div class="content">
+<div class="stop"><div class="time">08:30</div><b>大阪前往神戶三宮</b><p>建議搭 JR 神戶線。</p><div class="route">Shinsaibashi → 御堂筋線至 Umeda → JR Osaka → JR Kobe Line 新快速 / 快速至 Sannomiya。</div></div>
+<div class="stop"><div class="time">10:00</div><b>北野異人館街</b><p>洋館街區、坡道與咖啡廳。</p></div>
+<div class="stop"><div class="time">12:30</div><b>神戶牛午餐</b><p>建議預約鐵板燒，先確認套餐價格。</p></div>
+<div class="stop"><div class="time">14:30</div><b>南京町・美利堅公園</b><p>中華街小吃、海港散步。</p></div>
+<div class="stop"><div class="time">17:30</div><b>Harborland・神戶港塔</b><p>欣賞港灣景色，之後搭 JR 返回大阪。</p><div class="route">港區 → Motomachi / Kobe Station → JR 至 Sannomiya → Osaka → Umeda → Shinsaibashi。</div></div></div></details>
+<details class="day" data-city="osaka"><summary><span class="dn">DAY 08</span><span><div class="dt">大阪購物・最後晚餐</div><div class="dd">30 MAY · SUN · OSAKA</div></span><span class="plus">＋</span></summary><div class="content">
+<div class="stop"><div class="time">09:30</div><b>黑門市場</b><p>海鮮、玉子燒及在地小吃；店家營業時間各異。</p><div class="route">酒店步行至 Shinsaibashi → 御堂筋線至 Namba，再步行前往。</div></div>
+<div class="stop"><div class="time">12:00</div><b>難波・日本橋</b><p>購物、藥妝及伴手禮。</p></div>
+<div class="stop"><div class="time">15:00</div><b>心齋橋最後採購</b><p>補買伴手禮，回酒店整理行李。</p></div>
+<div class="stop"><div class="time">18:00</div><b>大阪最後晚餐</b><p>留給最想再吃一次的大阪美食。</p></div></div></details>
+<details class="day" data-city="osaka"><summary><span class="dn">DAY 09</span><span><div class="dt">回程日・KIX → KUL</div><div class="dd">31 MAY · MON · MH053</div></span><span class="plus">＋</span></summary><div class="content">
+<div class="stop"><div class="time">清晨</div><b>酒店退房</b><p>建議目標約06:40抵達機場，為國際航班預留約3小時。</p></div>
+<div class="stop"><div class="time">交通待確認</div><b>前往關西國際機場</b><p>酒店 → Shinsaibashi 御堂筋線 → Namba → 南海電鐵 → KIX。需核對當日首班車；若時間不合，預先安排計程車或接送。</p></div>
+<div class="stop"><div class="time">09:40</div><b>MH053 起飛</b><p>KIX → KUL，預計15:45抵達。</p></div></div></details>
+</div></section>
+<div class="note"><div class="label">IMPORTANT NOTES</div><p>5月23日清晨先寄放行李，不預訂提早入住；寄放服務請出發前向酒店確認。5月31日清晨交通必須提前核實。2027年景點開放時間、USJ入園安排與鐵路班次尚未最終確認。</p></div>
+<section><div class="label">BEFORE DEPARTURE</div><h2>旅行準備清單</h2><div class="panel checklist"><div id="progressText" style="font:10px Arial;color:#83796e">完成 0 / 9</div><div class="progress"><span id="progressBar"></span></div>
+<label><input type="checkbox"> 確認 MH052 / MH053 航班及行李額度</label><label><input type="checkbox"> 確認 Vessel Inn Shinsaibashi 訂房資料</label><label><input type="checkbox"> 確認5月23日清晨寄放行李</label><label><input type="checkbox"> 購買 USJ 門票及快速通關</label><label><input type="checkbox"> 預約神戶牛午餐</label><label><input type="checkbox"> 安排5月31日機場交通</label><label><input type="checkbox"> 準備 eSIM / 網路</label><label><input type="checkbox"> 旅遊保險及入境資料</label><label><input type="checkbox"> 護照、信用卡及日圓現金</label></div></section>
+<div class="footer"><b>Take the scenic route.</b><small>OSAKA · KYOTO · KOBE · MAY 2027</small></div>
+</main>
+<script>
+(()=> {
+ const SUPABASE_URL="YOUR_SUPABASE_PROJECT_URL";
+ const SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_PUBLIC_KEY";
+ const JOURNAL_ID="osaka-may-2027";
+ const $=s=>document.querySelector(s);
+ const days=[...document.querySelectorAll('.day')];
+ const tabs=[...document.querySelectorAll('.tabs button')];
+ tabs.forEach(t=>t.onclick=()=>{tabs.forEach(x=>x.classList.toggle('active',x===t));days.forEach(d=>d.hidden=t.dataset.filter!=='all'&&d.dataset.city!==t.dataset.filter)});
+ const hint=$('#hint'), editBtn=$('#editBtn'), saveBtn=$('#saveBtn'), loginBtn=$('#loginBtn'), logoutBtn=$('#logoutBtn'), panel=$('#authPanel');
+ let sb=null, isAdmin=false, editing=false;
+ const fields=()=>[...document.querySelectorAll('.dt,.dd,.time,.stop b,.stop p,.route,.note p')];
+ function setEdit(v){editing=v;fields().forEach(e=>e.contentEditable=v?'true':'false');editBtn.textContent=v?'結束編輯':'開始編輯';hint.textContent=v?'編輯中：點選行程標題、時間、說明或交通文字即可修改。完成後按「雲端儲存」。':'瀏覽模式。管理員登入後可編輯公開行程。';}
+ function getContent(){return {html:$('#days').innerHTML, note:$('.note').innerHTML, checklist:[...document.querySelectorAll('.checklist input')].map(x=>x.checked)}}
+ function applyContent(c){if(c?.html)$('#days').innerHTML=c.html;if(c?.note)$('.note').innerHTML=c.note;if(c?.checklist)document.querySelectorAll('.checklist input').forEach((x,i)=>x.checked=!!c.checklist[i]);}
+ async function loadCloud(){if(!sb)return;const {data,error}=await sb.from('travel_journals').select('content').eq('id',JOURNAL_ID).maybeSingle();if(!error&&data?.content)applyContent(data.content);else if(error)hint.textContent='雲端讀取暫時失敗：'+error.message;}
+ function setAdmin(v){isAdmin=v;editBtn.disabled=!v;saveBtn.disabled=!v;logoutBtn.hidden=!v;loginBtn.hidden=v;setEdit(false);hint.textContent=v?'已登入管理員。可以編輯並同步公開行程。':'公開瀏覽模式。'}
+ async function init(){
+  if(SUPABASE_URL.startsWith('YOUR_')||SUPABASE_ANON_KEY.startsWith('YOUR_')){hint.textContent='網站展示模式：尚未設定 Supabase，因此登入與跨裝置雲端同步尚未啟用。請依 README 完成設定。';return;}
+  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+  await loadCloud();
+  const {data}=await sb.auth.getSession();setAdmin(!!data.session);
+  sb.auth.onAuthStateChange((_event,session)=>setAdmin(!!session));
+ }
+ loginBtn.onclick=()=>{panel.hidden=!panel.hidden;};
+ $('#signInBtn').onclick=async()=>{if(!sb){$('#authMessage').textContent='尚未完成 Supabase 設定，請先依 README 設定網址與公開 anon key。';return;}const {error}=await sb.auth.signInWithPassword({email:$('#adminEmail').value,password:$('#adminPassword').value});$('#authMessage').textContent=error?error.message:'登入成功。';};
+ logoutBtn.onclick=async()=>{await sb?.auth.signOut();};
+ editBtn.onclick=()=>setEdit(!editing);
+ saveBtn.onclick=async()=>{if(!sb||!isAdmin)return;setEdit(false);const {error}=await sb.from('travel_journals').upsert({id:JOURNAL_ID,content:getContent(),updated_at:new Date().toISOString()});hint.textContent=error?'儲存失敗：'+error.message:'已同步儲存至雲端，公開訪客重新整理後即可看到最新版本。';};
+ $('#printBtn').onclick=()=>window.print();
+ init();
+})();
+</script></body></html>
