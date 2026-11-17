@@ -18,6 +18,29 @@ main{max-width:1050px;margin:auto;padding:32px clamp(16px,5vw,52px) 60px}.intro{
 .editable[contenteditable="true"]{outline:1px dashed #8da39e;outline-offset:3px;border-radius:3px;background:#fffef9}.edit-hint{font:11px/1.6 Arial;color:var(--muted);margin:8px 0}
 @media(min-width:720px){.hero{min-height:590px}main{padding-top:45px}.content{padding-left:85px}.day summary{padding:19px 21px}}
 @media print{.toolbar,.tabs,.edit-hint,.footer button{display:none!important}body{background:white}.hero{min-height:330px;print-color-adjust:exact}.day{break-inside:avoid}.day:not([open]) .content{display:block}}
+
+/* Daily photo, food and map upgrade */
+.day-extras{margin:20px 0 4px;padding-top:17px;border-top:1px solid var(--line)}
+.extras-heading{font:10px Arial,sans-serif;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin:0 0 10px}
+.photo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:10px 0 18px}
+.photo-card{margin:0;min-width:0;background:#f2eee6;border-radius:10px;overflow:hidden}
+.photo-card img{display:block;width:100%;height:132px;object-fit:cover;background:#e8e1d6}
+.photo-card figcaption{font:10px/1.5 Arial,sans-serif;color:#71695f;padding:7px 9px}
+.food-grid{display:grid;grid-template-columns:1fr;gap:8px;margin:10px 0 18px}
+.food-card{display:grid;grid-template-columns:38px 1fr auto;gap:9px;align-items:center;background:#f7f4ed;border:1px solid var(--line);border-radius:10px;padding:10px}
+.food-icon{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#e8eeea;font-size:18px}
+.food-card b{display:block;font:12px Arial,sans-serif;color:var(--ink);margin-bottom:3px}
+.food-card p{font:10px/1.5 Arial,sans-serif;margin:0}
+.food-map{font:10px Arial,sans-serif;color:#50686a;text-decoration:none;border:1px solid #cbd6d1;border-radius:18px;padding:7px 9px;white-space:nowrap}
+.map-card{background:#f1eee8;border:1px solid var(--line);border-radius:12px;padding:10px;margin-top:10px}
+.map-frame{width:100%;height:220px;border:0;border-radius:8px;display:block;background:#e6e2d9}
+.map-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
+.map-btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:22px;padding:10px 13px;font:11px Arial,sans-serif;background:#50686a;color:#fff}
+.map-btn.secondary{background:transparent;color:#50686a;border:1px solid #b9c9c2}
+.map-disclaimer{font:9px/1.5 Arial,sans-serif;color:#83796e;margin-top:7px}
+@media(min-width:620px){.photo-card img{height:190px}.food-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.map-frame{height:300px}}
+@media print{.map-actions,.food-map{display:none!important}.map-frame{height:180px}}
+
 </style>
 <!-- Cloud publishing setup: replace the two placeholders with your Supabase project values. -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -36,7 +59,7 @@ main{max-width:1050px;margin:auto;padding:32px clamp(16px,5vw,52px) 60px}.intro{
 <div class="panel"><div class="label">OUTBOUND · MH052 · 22 MAY</div><div class="flights"><div><strong>22:25</strong><small>KUL · 22 MAY 2027</small></div><div style="text-align:center">✈</div><div class="right"><strong>05:55</strong><small>KIX · 23 MAY 2027</small></div></div><p style="margin-top:8px">Malaysia Airlines · Overnight flight</p></div>
 <div class="panel"><div class="label">RETURN · MH053 · 31 MAY</div><div class="flights"><div><strong>09:40</strong><small>KIX · 31 MAY 2027</small></div><div style="text-align:center">✈</div><div class="right"><strong>15:45</strong><small>KUL · 31 MAY 2027</small></div></div><p style="margin-top:8px">Malaysia Airlines · Monday</p></div>
 <div class="hotel"><div class="label">YOUR OSAKA HOME · 8 NIGHTS</div><h3>VESSEL INN SHINSAIBASHI</h3><p>2-12-11 Minamisenba, Chuo Ward, Osaka<br>23 May check-in · 31 May check-out<br>1 room · Single non-smoking<br>清晨抵達先寄放行李，下午再辦理入住。</p></div></section>
-<section><div class="label">10 DAYS, AT A GLANCE</div><h2>每日行程與交通</h2><p>點選日期展開路線。任何打開網站的人都可以編輯，儲存後會同步到雲端，所有訪客都能看到最新版本。</p>
+<section><div class="label">10 DAYS, AT A GLANCE</div><h2>每日行程與交通</h2><p>點選日期展開行程照片、美食靈感與每日地圖。可直接開啟 Google Maps 導航；任何訪客都能編輯並同步到雲端。</p>
 <div class="toolbar"><button class="primary" id="editBtn" disabled>開始編輯</button><button id="saveBtn" disabled>同步儲存</button><button id="cancelBtn" disabled>取消修改</button><button id="printBtn">列印 / 存成 PDF</button></div><div class="edit-hint" id="hint">正在連接雲端行程資料…</div>
 <div class="tabs"><button class="active" data-filter="all">全部 10 天</button><button data-filter="osaka">大阪</button><button data-filter="kyoto">京都</button><button data-filter="kobe">神戶</button></div>
 <div id="days">
@@ -100,6 +123,133 @@ main{max-width:1050px;margin:auto;padding:32px clamp(16px,5vw,52px) 60px}.intro{
  const days=[...document.querySelectorAll('.day')];
  const tabs=[...document.querySelectorAll('.tabs button')];
  tabs.forEach(t=>t.onclick=()=>{tabs.forEach(x=>x.classList.toggle('active',x===t));days.forEach(d=>d.hidden=t.dataset.filter!=='all'&&d.dataset.city!==t.dataset.filter)});
+
+ const dayExtras = [
+  {
+   area:'Dotonbori & Shinsaibashi',
+   mapQuery:'Dotonbori Ebisubashi Shinsaibashi Osaka Japan',
+   origin:'Vessel Inn Shinsaibashi, Osaka, Japan', destination:'Dotonbori, Osaka, Japan',
+   waypoints:['Shinsaibashi-suji Shopping Street, Osaka, Japan','Amerikamura, Osaka, Japan'], mode:'walking',
+   photos:[
+    ['https://tripglaze.com/images/blog/osaka-dotonbori-night-food-street.jpg','道頓堀霓虹夜景'],
+    ['https://blog.lemarchejaponais.fr/images/takoyaki-boulettes-poulpe_1037.jpeg','大阪章魚燒']
+   ],
+   foods:[
+    ['🐙','章魚燒 Takoyaki','先在道頓堀試一份熱騰騰章魚燒；可搜尋 Takoyaki Doraku Wanaka。','Takoyaki Doraku Wanaka Namba Osaka'],
+    ['🥞','大阪燒 Okonomiyaki','大阪經典鐵板料理，可考慮 Mizuno 或 Chibo，排隊情況以當天為準。','Okonomiyaki Mizuno Dotonbori Osaka']
+   ]
+  },
+  {
+   area:'Universal City', mapQuery:'Universal Studios Japan Universal Citywalk Osaka Japan',
+   origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Universal Studios Japan, Osaka, Japan',waypoints:['Universal Citywalk Osaka, Japan'],mode:'transit',
+   photos:[
+    ['https://cdn-imgix.headout.com/media/images/f52e3172ea96967510a4ae2149df1450-19689-osaka-universal-express-pass-4-the-flying-dinosaur-universal-studios-japan-tickets-01.jpg','哈利波特魔法世界與 Super Nintendo World'],
+    ['https://rimage.gnst.jp/rest/img/c7jsvaj50000/s_001p.jpg?t=1752805986','日式鐵板牛排料理']
+   ],
+   foods:[
+    ['🍄','園區主題餐點','可把 Mario 主題餐點、園區小食與 Butterbeer 當作今天的美食體驗。','Universal Studios Japan restaurants food'],
+    ['🥩','CityWalk 牛排飯','出園後可到 Universal Citywalk 的 Gyukatsu Kyoto Katsugyu，吃日式炸牛排。','GYUKATSU Kyoto Katsugyu Universal Citywalk Osaka']
+   ]
+  },
+  {
+   area:'Osaka Castle · Nakanoshima · Umeda',mapQuery:'Osaka Castle Nakanoshima Umeda Sky Building Osaka Japan',
+   origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Umeda Sky Building, Osaka, Japan',waypoints:['Osaka Castle, Osaka, Japan','Nakanoshima Park, Osaka, Japan'],mode:'transit',
+   photos:[
+    ['https://monthly48.com/storage/article/610/6kGQtXBQtw7O2LS4OeFMMrm3WuAtzRME1uGpoQqg.jpeg','大阪城與城市天際線'],
+    ['https://www.celebritycruises.com/blog/content/uploads/2025/01/osaka-food-okonomiyaki.jpg','大阪燒 Okonomiyaki']
+   ],
+   foods:[
+    ['🍱','中之島午餐','河岸咖啡廳或日式定食，安排一頓舒服的午餐。','restaurants near Nakanoshima Park Osaka'],
+    ['🥢','梅田地下街美食','傍晚可逛梅田百貨地下食品街，找 ikayaki、便當或甜點。','Hankyu Umeda depachika ikayaki Osaka']
+   ]
+  },
+  {
+   area:'Higashiyama · Gion',mapQuery:'Kiyomizu dera Ninenzaka Yasaka Shrine Gion Kyoto Japan',
+   origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Gion, Kyoto, Japan',waypoints:['Kiyomizu-dera, Kyoto, Japan','Ninenzaka, Kyoto, Japan','Yasaka Shrine, Kyoto, Japan'],mode:'transit',
+   photos:[
+    ['https://www.irishexaminer.com/cms_media/module_img/9883/4941917_15_articleinline_iStock-1384565046.jpg','清水寺周邊東山石板街'],
+    ['https://tabiiro.jp/client_gourmet/gourmet/s/311462-kyoto-kazurano-seisyuan/menu/217498/img1-1633410448021-2795.jpg','京都風日式豆腐與蕎麥套餐']
+   ],
+   foods:[
+    ['🍵','抹茶甜點','在二年坂、三年坂一帶找抹茶霜淇淋、蕨餅或和菓子。','matcha dessert Ninenzaka Kyoto'],
+    ['🍲','京都湯豆腐','東山一帶可安排湯豆腐或京野菜定食，適合慢慢吃。','yudofu restaurant Kiyomizu Gion Kyoto']
+   ]
+  },
+  {
+   area:'Fushimi Inari · Nishiki · Kamo River',mapQuery:'Fushimi Inari Taisha Nishiki Market Kamo River Kyoto Japan',
+   origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Kamo River, Kyoto, Japan',waypoints:['Fushimi Inari Taisha, Kyoto, Japan','Nishiki Market, Kyoto, Japan'],mode:'transit',
+   photos:[
+    ['https://www.celebritycruises.com/blog/content/uploads/2022/01/japan-landmarks-fushimi-inari-taisha-kyoto.jpg','伏見稻荷千本鳥居'],
+    ['https://a0.muscache.com/im/pictures/lombard/MtTemplate-274389-active_media/original/882b1220-8ce7-4b76-9f9a-7fcc371f99e9.jpg','錦市場街頭小食']
+   ],
+   foods:[
+    ['🥚','玉子燒與市場小食','錦市場可試玉子燒、漬物、豆乳甜點及各式小份量小食。','Nishiki Market Kyoto food stalls'],
+    ['🦊','稻荷壽司・狐狸烏龍麵','伏見稻荷周邊可留意稻荷壽司與 kitsune udon。','kitsune udon near Fushimi Inari Taisha Kyoto']
+   ]
+  },
+  {
+   area:'Arashiyama Bamboo Grove · Tenryuji · Togetsukyo',mapQuery:'Arashiyama Bamboo Grove Tenryuji Togetsukyo Bridge Kyoto Japan',
+   origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Togetsukyo Bridge, Kyoto, Japan',waypoints:['Arashiyama Bamboo Grove, Kyoto, Japan','Tenryu-ji, Kyoto, Japan'],mode:'transit',
+   photos:[
+    ['https://mediaim.expedia.com/destination/2/6f024abcd72a361f2ef55a471e0d51a6.jpg','嵐山竹林小徑'],
+    ['https://cdn-ak.f.st-hatena.com/images/fotolife/Y/Yukonosuke/20200817/20200817175119.jpg','渡月橋河景與蕎麥麵']
+   ],
+   foods:[
+    ['🍜','嵐山蕎麥麵','渡月橋旁可安排蕎麥麵與河景午餐，例如搜尋 Arashiyama Yoshimura。','Arashiyama Yoshimura soba Kyoto'],
+    ['🥩','日式炸牛排','想吃肉類定食，可查看竹林入口附近的 Gyukatsu Kyoto Katsugyu 嵐山店。','Gyukatsu Kyoto Katsugyu Arashiyama Kyoto']
+   ]
+  },
+  {
+   area:'Kitano · Sannomiya · Nankinmachi · Harborland',mapQuery:'Kitano Ijinkan Nankinmachi Kobe Harborland Port Tower Japan',
+   origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Kobe Harborland, Kobe, Japan',waypoints:['Kitano Ijinkan, Kobe, Japan','Mouriya Sannomiya, Kobe, Japan','Nankinmachi, Kobe, Japan'],mode:'transit',
+   photos:[
+    ['https://cdn-ak.f.st-hatena.com/images/fotolife/r/ritocamp/20220730/20220730134229.jpg','神戶南京町街景'],
+    ['https://rimage.gnst.jp/rest/img/c7jsvaj50000/s_001p.jpg?t=1752805986','神戶牛鐵板燒']
+   ],
+   foods:[
+    ['🥩','神戶牛鐵板燒','想吃經典神戶牛，可考慮 Sannomiya 的 Mouriya；套餐與價格先查詢。','Kobe Beef Steak Restaurant Mouriya Sannomiya Kobe'],
+    ['🥟','南京町街頭小吃','中華街可吃豬肉包、煎餃及小份量街頭小食。','Nankinmachi Kobe street food']
+   ]
+  },
+  {
+   area:'Kuromon Market · Namba · Shinsaibashi',mapQuery:'Kuromon Ichiba Market Namba Shinsaibashi Osaka Japan',
+   origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Shinsaibashi-suji Shopping Street, Osaka, Japan',waypoints:['Kuromon Ichiba Market, Osaka, Japan','Namba, Osaka, Japan'],mode:'walking',
+   photos:[
+    ['https://a0.muscache.com/im/pictures/lombard/MtTemplate-274389-active_media/original/882b1220-8ce7-4b76-9f9a-7fcc371f99e9.jpg','市場海鮮與串物'],
+    ['https://blog.lemarchejaponais.fr/images/takoyaki-boulettes-poulpe_1037.jpeg','大阪街頭章魚燒']
+   ],
+   foods:[
+    ['🍣','黑門市場小吃','可按胃口分食玉子燒、烤海鮮、刺身或和牛串；各攤營業時間不同。','Kuromon Ichiba Market Osaka food'],
+    ['🍰','大阪甜點伴手禮','回心齋橋前可找起司蛋糕、布丁或日式甜點。','Rikuro Ojisan no Mise Namba Osaka']
+   ]
+  },
+  {
+   area:'Vessel Inn · Namba · Kansai International Airport',mapQuery:'Kansai International Airport Terminal 1 Osaka Japan',
+   origin:'Vessel Inn Shinsaibashi, Osaka, Japan',destination:'Kansai International Airport Terminal 1, Osaka, Japan',waypoints:['Nankai Namba Station, Osaka, Japan'],mode:'transit',
+   photos:[
+    ['https://tripglaze.com/images/blog/osaka-dotonbori-night-food-street.jpg','大阪旅程回憶'],
+    ['https://www.celebritycruises.com/blog/content/uploads/2025/01/osaka-food-okonomiyaki.jpg','最後一份大阪燒']
+   ],
+   foods:[
+    ['🍱','機場便當・日式定食','若時間充裕，可在 KIX 航廈內找便當、烏龍麵或咖哩；先辦理登機與安檢。','Kansai International Airport restaurants Terminal 1'],
+    ['☕','登機前咖啡','預留時間買飲料與小點心，並留意登機閘口。','Kansai International Airport Terminal 1 cafe']
+   ]
+  }
+ ];
+ function mapsSearch(q){return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);}
+ function mapsDirections(d){const p=new URLSearchParams({api:'1',origin:d.origin,destination:d.destination,travelmode:d.mode});if(d.waypoints?.length)p.set('waypoints',d.waypoints.join('|'));return 'https://www.google.com/maps/dir/?'+p.toString();}
+ function renderExtras(day,index){
+   const d=dayExtras[index];if(!d)return;
+   const host=day.querySelector('.content');if(!host||host.querySelector('.day-extras'))return;
+   const section=document.createElement('section');section.className='day-extras';
+   const photos=d.photos.map(([src,caption])=>`<figure class="photo-card"><img src="${src}" alt="${caption}" loading="lazy" referrerpolicy="no-referrer"><figcaption>${caption}</figcaption></figure>`).join('');
+   const foods=d.foods.map(([icon,name,desc,query])=>`<article class="food-card"><span class="food-icon">${icon}</span><div><b>${name}</b><p>${desc}</p></div><a class="food-map" href="${mapsSearch(query)}" target="_blank" rel="noopener">找位置 ↗</a></article>`).join('');
+   const mapSrc='https://www.google.com/maps?q='+encodeURIComponent(d.mapQuery)+'&output=embed';
+   section.innerHTML=`<div class="extras-heading">TODAY IN PICTURES · ${d.area}</div><div class="photo-grid">${photos}</div><div class="extras-heading">WHAT TO EAT TODAY</div><div class="food-grid">${foods}</div><div class="extras-heading">TODAY'S MAP & ROUTE</div><div class="map-card"><iframe class="map-frame" title="${d.area} Google Map" src="${mapSrc}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe><div class="map-actions"><a class="map-btn" href="${mapsDirections(d)}" target="_blank" rel="noopener">Google Maps 導航 ↗</a><a class="map-btn secondary" href="${mapsSearch(d.mapQuery)}" target="_blank" rel="noopener">查看景點地圖</a></div><div class="map-disclaimer">地圖與路線由 Google Maps 提供；交通方式、營業時間及路況請以出發當日資訊為準。</div></div>`;
+   host.appendChild(section);
+ }
+ days.forEach((day,index)=>renderExtras(day,index));
+
  const hint=$('#hint'),editBtn=$('#editBtn'),saveBtn=$('#saveBtn'),cancelBtn=$('#cancelBtn');
  let sb=null,editing=false,baseline=null,loading=false;
  const fields=()=>[...document.querySelectorAll('.dt,.dd,.time,.stop b,.stop p,.route,.note p')];
@@ -110,7 +260,7 @@ main{max-width:1050px;margin:auto;padding:32px clamp(16px,5vw,52px) 60px}.intro{
    updateProgress();
  }
  function updateProgress(){const boxes=[...document.querySelectorAll('.checklist input')],n=boxes.filter(x=>x.checked).length;$('#progressText').textContent=`完成 ${n} / ${boxes.length}`;$('#progressBar').style.width=(boxes.length?100*n/boxes.length:0)+'%';}
- function setEdit(v){editing=v;fields().forEach(e=>e.contentEditable=v?'true':'false');editBtn.textContent=v?'結束編輯':'開始編輯';saveBtn.disabled=!v;cancelBtn.disabled=!v;hint.textContent=v?'編輯中：直接點選行程文字修改。完成後按「同步儲存」，所有訪客重新整理後都會看到更新。':'雲端瀏覽模式。任何打開網站的人都可以開始編輯。';}
+ function setEdit(v){editing=v;fields().forEach(e=>e.contentEditable=v?'true':'false');editBtn.textContent=v?'結束編輯':'開始編輯';saveBtn.disabled=!v;cancelBtn.disabled=!v;hint.textContent=v?'編輯中：直接點選行程文字修改。照片、美食卡與地圖為網站展示內容；完成後按「同步儲存」。':'雲端瀏覽模式。任何打開網站的人都可以開始編輯。';}
  async function loadCloud(showMessage=true){
    if(!sb||editing||loading)return;loading=true;
    const {data,error}=await sb.from('trip_content').select('content,updated_at').eq('id',ROW_ID).maybeSingle();
