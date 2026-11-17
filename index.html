@@ -36,8 +36,8 @@ main{max-width:1050px;margin:auto;padding:32px clamp(16px,5vw,52px) 60px}.intro{
 <div class="panel"><div class="label">OUTBOUND · MH052 · 22 MAY</div><div class="flights"><div><strong>22:25</strong><small>KUL · 22 MAY 2027</small></div><div style="text-align:center">✈</div><div class="right"><strong>05:55</strong><small>KIX · 23 MAY 2027</small></div></div><p style="margin-top:8px">Malaysia Airlines · Overnight flight</p></div>
 <div class="panel"><div class="label">RETURN · MH053 · 31 MAY</div><div class="flights"><div><strong>09:40</strong><small>KIX · 31 MAY 2027</small></div><div style="text-align:center">✈</div><div class="right"><strong>15:45</strong><small>KUL · 31 MAY 2027</small></div></div><p style="margin-top:8px">Malaysia Airlines · Monday</p></div>
 <div class="hotel"><div class="label">YOUR OSAKA HOME · 8 NIGHTS</div><h3>VESSEL INN SHINSAIBASHI</h3><p>2-12-11 Minamisenba, Chuo Ward, Osaka<br>23 May check-in · 31 May check-out<br>1 room · Single non-smoking<br>清晨抵達先寄放行李，下午再辦理入住。</p></div></section>
-<section><div class="label">10 DAYS, AT A GLANCE</div><h2>每日行程與交通</h2><p>點選日期展開路線。編輯模式可直接修改行程文字，儲存後會保留在目前這個瀏覽器。</p>
-<div class="toolbar"><button class="primary" id="loginBtn">管理員登入</button><button id="editBtn" disabled>開始編輯</button><button id="saveBtn" disabled>雲端儲存</button><button id="logoutBtn" hidden>登出</button><button id="printBtn">列印 / 存成 PDF</button></div><div class="panel" id="authPanel" hidden><h3>私人管理登入</h3><p>只有獲授權的管理員可以修改公開行程。</p><input id="adminEmail" type="email" placeholder="管理員 Email" style="width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;margin:8px 0"><input id="adminPassword" type="password" placeholder="密碼" style="width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;margin:0 0 8px"><button class="primary" id="signInBtn">登入</button><p id="authMessage" style="margin-top:8px"></p></div><div class="edit-hint" id="hint">目前為瀏覽模式。按「開始編輯」即可直接點選行程文字修改。</div>
+<section><div class="label">10 DAYS, AT A GLANCE</div><h2>每日行程與交通</h2><p>點選日期展開路線。任何打開網站的人都可以編輯，儲存後會同步到雲端，所有訪客都能看到最新版本。</p>
+<div class="toolbar"><button class="primary" id="editBtn" disabled>開始編輯</button><button id="saveBtn" disabled>同步儲存</button><button id="cancelBtn" disabled>取消修改</button><button id="printBtn">列印 / 存成 PDF</button></div><div class="edit-hint" id="hint">正在連接雲端行程資料…</div>
 <div class="tabs"><button class="active" data-filter="all">全部 10 天</button><button data-filter="osaka">大阪</button><button data-filter="kyoto">京都</button><button data-filter="kobe">神戶</button></div>
 <div id="days">
 <details class="day" data-city="osaka" open><summary><span class="dn">DAY 01</span><span><div class="dt">抵達大阪・心齋橋初體驗</div><div class="dd">23 MAY · SUN · OSAKA</div></span><span class="plus">＋</span></summary><div class="content">
@@ -93,34 +93,51 @@ main{max-width:1050px;margin:auto;padding:32px clamp(16px,5vw,52px) 60px}.intro{
 </main>
 <script>
 (()=> {
- const SUPABASE_URL="YOUR_SUPABASE_PROJECT_URL";
- const SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_PUBLIC_KEY";
- const JOURNAL_ID="osaka-may-2027";
+ const SUPABASE_URL="https://fzlwxculdcytqgkjmobh.supabase.co";
+ const SUPABASE_PUBLISHABLE_KEY="sb_publishable_Bvg8HHPOBG9Td55ryx_GlA_KaHPG5Uu";
+ const ROW_ID=1;
  const $=s=>document.querySelector(s);
  const days=[...document.querySelectorAll('.day')];
  const tabs=[...document.querySelectorAll('.tabs button')];
  tabs.forEach(t=>t.onclick=()=>{tabs.forEach(x=>x.classList.toggle('active',x===t));days.forEach(d=>d.hidden=t.dataset.filter!=='all'&&d.dataset.city!==t.dataset.filter)});
- const hint=$('#hint'), editBtn=$('#editBtn'), saveBtn=$('#saveBtn'), loginBtn=$('#loginBtn'), logoutBtn=$('#logoutBtn'), panel=$('#authPanel');
- let sb=null, isAdmin=false, editing=false;
+ const hint=$('#hint'),editBtn=$('#editBtn'),saveBtn=$('#saveBtn'),cancelBtn=$('#cancelBtn');
+ let sb=null,editing=false,baseline=null,loading=false;
  const fields=()=>[...document.querySelectorAll('.dt,.dd,.time,.stop b,.stop p,.route,.note p')];
- function setEdit(v){editing=v;fields().forEach(e=>e.contentEditable=v?'true':'false');editBtn.textContent=v?'結束編輯':'開始編輯';hint.textContent=v?'編輯中：點選行程標題、時間、說明或交通文字即可修改。完成後按「雲端儲存」。':'瀏覽模式。管理員登入後可編輯公開行程。';}
- function getContent(){return {html:$('#days').innerHTML, note:$('.note').innerHTML, checklist:[...document.querySelectorAll('.checklist input')].map(x=>x.checked)}}
- function applyContent(c){if(c?.html)$('#days').innerHTML=c.html;if(c?.note)$('.note').innerHTML=c.note;if(c?.checklist)document.querySelectorAll('.checklist input').forEach((x,i)=>x.checked=!!c.checklist[i]);}
- async function loadCloud(){if(!sb)return;const {data,error}=await sb.from('travel_journals').select('content').eq('id',JOURNAL_ID).maybeSingle();if(!error&&data?.content)applyContent(data.content);else if(error)hint.textContent='雲端讀取暫時失敗：'+error.message;}
- function setAdmin(v){isAdmin=v;editBtn.disabled=!v;saveBtn.disabled=!v;logoutBtn.hidden=!v;loginBtn.hidden=v;setEdit(false);hint.textContent=v?'已登入管理員。可以編輯並同步公開行程。':'公開瀏覽模式。'}
- async function init(){
-  if(SUPABASE_URL.startsWith('YOUR_')||SUPABASE_ANON_KEY.startsWith('YOUR_')){hint.textContent='網站展示模式：尚未設定 Supabase，因此登入與跨裝置雲端同步尚未啟用。請依 README 完成設定。';return;}
-  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-  await loadCloud();
-  const {data}=await sb.auth.getSession();setAdmin(!!data.session);
-  sb.auth.onAuthStateChange((_event,session)=>setAdmin(!!session));
+ function snapshot(){return {fields:fields().map(e=>e.textContent),checklist:[...document.querySelectorAll('.checklist input')].map(x=>x.checked)}}
+ function applyContent(c){
+   if(Array.isArray(c?.fields)){const els=fields();c.fields.forEach((v,i)=>{if(els[i])els[i].textContent=String(v??'')});}
+   if(Array.isArray(c?.checklist))document.querySelectorAll('.checklist input').forEach((x,i)=>x.checked=!!c.checklist[i]);
+   updateProgress();
  }
- loginBtn.onclick=()=>{panel.hidden=!panel.hidden;};
- $('#signInBtn').onclick=async()=>{if(!sb){$('#authMessage').textContent='尚未完成 Supabase 設定，請先依 README 設定網址與公開 anon key。';return;}const {error}=await sb.auth.signInWithPassword({email:$('#adminEmail').value,password:$('#adminPassword').value});$('#authMessage').textContent=error?error.message:'登入成功。';};
- logoutBtn.onclick=async()=>{await sb?.auth.signOut();};
- editBtn.onclick=()=>setEdit(!editing);
- saveBtn.onclick=async()=>{if(!sb||!isAdmin)return;setEdit(false);const {error}=await sb.from('travel_journals').upsert({id:JOURNAL_ID,content:getContent(),updated_at:new Date().toISOString()});hint.textContent=error?'儲存失敗：'+error.message:'已同步儲存至雲端，公開訪客重新整理後即可看到最新版本。';};
+ function updateProgress(){const boxes=[...document.querySelectorAll('.checklist input')],n=boxes.filter(x=>x.checked).length;$('#progressText').textContent=`完成 ${n} / ${boxes.length}`;$('#progressBar').style.width=(boxes.length?100*n/boxes.length:0)+'%';}
+ function setEdit(v){editing=v;fields().forEach(e=>e.contentEditable=v?'true':'false');editBtn.textContent=v?'結束編輯':'開始編輯';saveBtn.disabled=!v;cancelBtn.disabled=!v;hint.textContent=v?'編輯中：直接點選行程文字修改。完成後按「同步儲存」，所有訪客重新整理後都會看到更新。':'雲端瀏覽模式。任何打開網站的人都可以開始編輯。';}
+ async function loadCloud(showMessage=true){
+   if(!sb||editing||loading)return;loading=true;
+   const {data,error}=await sb.from('trip_content').select('content,updated_at').eq('id',ROW_ID).maybeSingle();
+   loading=false;
+   if(error){if(showMessage)hint.textContent='雲端讀取失敗：'+error.message+'。請確認 Supabase SQL 設定。';return;}
+   if(!data){hint.textContent='找不到 trip_content 的 id=1 資料列，請先確認 SQL 已成功執行。';return;}
+   if(data.content?.fields)applyContent(data.content);
+   baseline=snapshot();
+   if(showMessage)hint.textContent='已連接雲端。所有訪客看到的是同一份行程；任何人都可以編輯。';
+ }
+ async function init(){
+   if(SUPABASE_URL.includes('PASTE_')||SUPABASE_PUBLISHABLE_KEY.includes('PASTE_')){hint.textContent='尚未設定 Supabase。請在 index.html 填入 Project URL 與 sb_publishable_ 開頭的 Publishable Key。';return;}
+   try{sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);editBtn.disabled=false;await loadCloud();setInterval(()=>loadCloud(false),12000);}
+   catch(e){hint.textContent='Supabase 初始化失敗：'+e.message;}
+ }
+ editBtn.onclick=()=>{if(!editing){baseline=snapshot();setEdit(true);}else{setEdit(false);hint.textContent='修改尚未同步。若要公開更新，請按「開始編輯」後再儲存。';}};
+ cancelBtn.onclick=()=>{if(baseline)applyContent(baseline);setEdit(false);hint.textContent='已取消本次修改。';};
+ saveBtn.onclick=async()=>{
+   if(!sb||!editing)return;
+   saveBtn.disabled=true;hint.textContent='正在同步儲存…';
+   const content=snapshot();
+   const {data,error}=await sb.from('trip_content').update({content,updated_at:new Date().toISOString()}).eq('id',ROW_ID).select('id').maybeSingle();
+   if(error||!data){saveBtn.disabled=false;hint.textContent='儲存失敗：'+(error?.message||'沒有更新任何資料列。請確認 SQL 權限與 id=1。');return;}
+   baseline=content;setEdit(false);hint.textContent='已成功同步到雲端！其他人重新整理網站即可看到最新內容。';
+ };
+ document.querySelectorAll('.checklist input').forEach(x=>x.addEventListener('change',()=>{updateProgress();if(!editing)hint.textContent='勾選狀態目前只在這個瀏覽器顯示；要同步清單，請先按「開始編輯」再修改並儲存。';}));
  $('#printBtn').onclick=()=>window.print();
- init();
+ updateProgress();init();
 })();
 </script></body></html>
